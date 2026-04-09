@@ -1,0 +1,54 @@
+# synaptic Framework: Project Task List
+
+## Phase 1: Environment & Foundation
+- [x] Initialize synaptic directory structure:
+    - [x] `agents/` (Core Personas)
+    - [x] `skills/` (Technical Playbooks)
+    - [x] `workspace/` (Mission Isolation)
+- [x] Create `.env.example` file
+- [x] Create professional `.gitignore`
+- [x] Create `requirements.txt`
+
+## Phase 2: Agent Intel (agents/)
+- [x] Create `orchestrator.md`
+- [x] Create `product-manager.md`
+- [x] Create `software-engineer.md`
+- [x] Create `tester.md`
+- [x] Create `oncall-engineer.md`
+
+## Phase 3: synaptic Core Engine (synaptic/)
+- [x] Implement `GeminiAdapter`: Multi-key rotator (v2)
+- [x] Implement `OllamaAdapter`: Local execution engine
+- [x] Implement `AgentRunner`: Persona-based execution
+- [x] Implement `SkillRegistry`: Dynamic playbook injection
+- [x] Implement `MissionEngine`: Self-healing mission workflow
+
+## Phase 4: Command Center (main.py)
+- [x] Build Unified CLI: `dash`, `launch`, `stress`
+- [x] Implement usage logger and dashboard monitoring
+
+## Phase 5: Skills (skills/)
+- [x] Create `fastapi-expert`
+- [x] Create `security-scanner`
+- [x] Create `context-filter`
+
+## Phase 6: Validation
+- [x] Updated `stress_test.py` for synaptic pool
+- [ ] Execute Mission 001
+- [ ] Validate synaptic Cache persistence
+
+## Phase 7: Interactive Gating & Checkpointing (synaptic v3.0)
+- [x] Implement `state.json` persistence for mission resumption
+- [x] Add `INTERACTIVE_MODE` flag for human-in-the-loop (HITL) approvals
+- [x] Implement Milestone Gating: PM Approval ➔ SWE Code Review ➔ Final Go-Live
+- [x] Create `python main.py resume <mission_id>` command
+
+## Phase 8: Hardened Runtime Testing
+- [x] Implement `RuntimeRunner` for safe local code execution
+- [x] Capture `stdout`/`stderr` and inject real error logs into the Tester's context
+- [ ] Add basic Docker containerization for isolated test environments
+
+## Phase 9: Professional Hand-off
+- [x] Create `DocumentationAgent` persona
+- [x] Generate `TECHNICAL_DOCS.md` automatically after successful missions
+- [x] Implement structured execution logs (JSON) for mission auditing

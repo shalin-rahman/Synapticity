@@ -1,0 +1,18 @@
+# Environment variables
+.env
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Agency Workspace & Logs
+projects/*/output/
+usage_log.json
+tracker.json
+session_state.json
+
+# Local IDE settings
+.vscode/
+.idea/
