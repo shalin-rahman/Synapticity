@@ -19,7 +19,7 @@ def run_stress_test():
     results = []
 
     for i, _ in enumerate(keys):
-        console.print(f"🧪 Testing Account {i+1}...")
+        console.print(f"[TEST] Testing Account {i+1}...")
         count = 0
         start_time = time.time()
         
@@ -31,9 +31,9 @@ def run_stress_test():
                     contents="ping"
                 )
                 count += 1
-                console.print(f"  [green]✔[/] Burst {count} success", end="\r")
+                console.print(f"  [green][OK][/] Burst {count} success", end="\r")
             except Exception as e:
-                console.print(f"\n  [red]✘[/] Account {i+1} saturated: {e}")
+                console.print(f"\n  [red][FAIL][/] Account {i+1} saturated: {e}")
                 break
         
         elapsed = time.time() - start_time
@@ -47,7 +47,7 @@ def run_stress_test():
         adapter.rotate()
 
     # Summary
-    table = Table(title="📈 synaptic Pool Performance Summary")
+    table = Table(title="[STATS] synaptic Pool Performance Summary")
     table.add_column("Account Pool", style="cyan")
     table.add_column("Throughput (Req)", style="green")
     table.add_column("Response Latency", style="yellow")
