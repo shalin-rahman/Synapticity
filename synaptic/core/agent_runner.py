@@ -8,8 +8,8 @@ import threading
 import time
 class AgentRunner:
     """
-    Handles the execution of specific agent personas.
-    Supports Model Failover (e.g., Gemini -> Ollama) for high availability.
+    Manages the communication with specialized agent personas.
+    Includes built-in fallback logic if the primary model provider is unavailable.
     """
     
     def __init__(self, model: AbstractModel, persona_file: str, fallback_model: AbstractModel = None):
@@ -17,13 +17,13 @@ class AgentRunner:
         self.persona_file = persona_file
         self.fallback_model = fallback_model
 
-    def execute(self, prompt: str, context: str = "", task: str = "Processing", mission_id: str = None) -> str:
-        """Runs the loaded persona against a prompt and optional context."""
+    def run(self, prompt: str, context: str = "", task: str = "Processing", mission_id: str = None) -> str:
+        """Processes a prompt through the chosen persona, using optional context."""
         path = os.path.join(settings.AGENT_PATH, self.persona_file)
         if not os.path.exists(path):
             raise ConfigurationError(
-                f"Critical Synaptic Persona File missing: {self.persona_file}. "
-                "Please ensure the 'agents/' directory is correctly populated."
+                f"Could not find the persona file: {self.persona_file}. "
+                "Ensure the 'agents/' directory is correctly set up."
             )
             
         with open(path, "r", encoding="utf-8") as f:
@@ -47,23 +47,23 @@ class AgentRunner:
                 elapsed += settings.HEARTBEAT_INTERVAL
                 console.print(f"[dim]  ... {agent_name} is still {task} ({elapsed}s elapsed)[/]")
         
-        with console.status(f"[bold cyan]{agent_name}[/] is working: [dim]{task}[/] (via {provider_name})..."):
+        with console.status(f"[bold cyan]{agent_name}[/] is: [dim]{task}[/] (using {provider_name})..."):
             t = threading.Thread(target=_heartbeat, daemon=True)
             t.start()
             try:
                 result = self.model.generate(system_instruction, final_prompt)
                 done_event.set()
                 MemoryLogger.log_interaction(mission_id, agent_name, task, provider_name, system_instruction, final_prompt, result)
-                console.print(f"[DONE] [green]{agent_name} check-in:[/] [dim]{task} complete.[/]")
+                console.print(f"[bold green][OK][/] {agent_name}: {task} finished.")
                 return result
             except (ModelProviderError, ConfigurationError) as e:
                 done_event.set()
                 if self.fallback_model:
                     fallback_name = type(self.fallback_model).__name__.replace("Adapter", "")
-                    synaptic_log.warning(f"Primary model failover triggered: {e}")
+                    synaptic_log.warning(f"Failover triggered: {e}")
                     
-                    console.print(f"\n[bold yellow][WARN] {provider_name} Saturated.[/] [dim]({e})[/]")
-                    console.print(f"[FAILOVER] Switching to [bold cyan]{fallback_name}[/] (Secondary Strategy)...")
+                    console.print(f"\n[bold yellow][WARN][/] {provider_name} was unable to respond. ({e})")
+                    console.print(f"[FAILOVER] Switching to [bold cyan]{fallback_name}[/] to continue work...")
                     
                     with console.status(f"[bold cyan]{agent_name}[/] is working: [dim]{task}[/] (via {fallback_name})..."):
                         fallback_done = threading.Event()

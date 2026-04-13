@@ -8,6 +8,7 @@ from synaptic.cli.handlers.integration import (
     handle_deploy, handle_ingest, handle_stress, handle_admin
 )
 from synaptic.cli.handlers.review import handle_review
+from synaptic.cli.handlers.learning import handle_learn
 from synaptic.utils.doctor import SynapticDoctor
 
 COMMAND_REGISTRY: dict[str, callable] = {
@@ -26,4 +27,5 @@ COMMAND_REGISTRY: dict[str, callable] = {
     "stress":  handle_stress,
     "admin":   handle_admin,
     "review":  handle_review,
+    "learn":   handle_learn,
 }

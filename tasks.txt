@@ -167,6 +167,18 @@
 - [ ] Implement Turbo-Remediation: Automated parser to strip common syntax/markdown errors before verification
 - [ ] Persistent Resource Cache: Index common library patterns to reduce PM/SWE reasoning overhead
 
+## Phase 19: Autonomous Self-Learning & Meta-Cognition
+- [x] Create `ReflectorAgent` persona for post-mission critical analysis
+- [x] Implement `SelfLearningEngine` to convert mission logs into permanent skill playbooks
+- [x] Implement `./sync learn <mission_id>` command to trigger reflection cycles
+- [x] Auto-inject `skills/autonomous-lessons.md` into every new mission context for continuous improvement
+
+## Phase 20: Role Job Performance Analytics
+- [ ] Implement Agent Performance Scorecards (Success/Fix/Failure metrics per persona)
+- [ ] Implement `synaptic/core/analytics.py`: Track tokens, latency, and "Stress Level" per role
+- [ ] Implement `./sync stats <mission_id>`: Visual dashboard of agent efficiency
+- [ ] Autonomous Role Rotation: If SWE fails repeatedly, attempt a different model provider for that role specifically
+
 ---
 
 ## [PENDING] Future Enhancements

@@ -41,13 +41,13 @@ def handle_update() -> None:
     save_state(mission_id, state)
 
     console.print(Panel(
-        f"[bold yellow][UPDATE] Mission Modification Summary[/]\n\n"
-        f"[bold]Mission:[/] {mission_id}\n"
-        f"[dim]Old Objective:[/] {old_objective}\n"
+        f"[bold yellow]Project Update Summary[/]\n\n"
+        f"[bold]Project:[/] {mission_id}\n"
+        f"[dim]Previous Objective:[/] {old_objective}\n"
         f"[bold green]New Objective:[/] {new_goal}\n\n"
-        f"[dim]System Action:[/] Cleared structural specs and cached codebase. "
-        f"Agentic memory history retained. Preparing for re-planning phase.",
-        title="Mission State Updated",
+        f"[dim]System Action:[/] Existing plans and code have been cleared. "
+        f"History has been retained. Ready to re-start the planning phase.",
+        title="Project Updated",
         border_style="yellow"
     ))
     synaptic.resume(mission_id)
@@ -63,10 +63,10 @@ def handle_remove() -> None:
         return
     shutil.rmtree(workspace)
     console.print(Panel(
-        f"[bold red][DEL] Mission Purged[/]\n\n"
-        f"[bold]Mission:[/] {mission_id}\n"
-        f"[dim]System Action:[/] Successfully deleted all associated logic, cache, and state files.",
-        title="Mission Removal Summary",
+        f"[bold red]Project Deleted[/]\n\n"
+        f"[bold]Project:[/] {mission_id}\n"
+        f"[dim]Action:[/] Successfully removed the project directory and all associated state files.",
+        title="Removal Complete",
         border_style="red"
     ))
 

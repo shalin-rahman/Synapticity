@@ -1,78 +1,72 @@
-# Synaptic Agentic Framework (v3.0)
+# Synapticity Framework (v3.0)
 
-> A Staff-Engineer level autonomous Software Development Life Cycle (SDLC) system designed for high-IQ software production. Synapticity leverages a hybrid Local (Ollama) and Cloud (Gemini) intelligence model to ensure zero-cost, private, and resilient engineering.
-
----
-
-## [STRATEGY] System Philosophy & Best Practices
-
-Synapticity is not just a code generator; it is a **State Machine** that mimics the rigorous processes of a high-functioning engineering team. To get the best results in practice, adhere to the following operational standards:
-
-### 1. The Human-In-The-Loop (HITL) Principle
-While the framework acts autonomously, you are the **Principal Architect**. 
-- **Observe the Audits:** Do not blindly approve code hand-offs. Use the `./sync audit <id>` command to review the exact architectural path the agents took.
-- **Enforce Checkpoints:** The system naturally stops at critical milestones (Planning, Implementation, Healing). Use these pauses to read `MISSION_LOG.md` before authorizing the next phase via terminal input.
-
-### 2. Iterative Spec Engineering
-Agents perform best with tight, scoped objectives. 
-- **Start Small:** Use `./sync launch <id> "Objective"` for foundational scaffolding.
-- **Pivot Gracefully:** If you realize the AI is drifting, use `./sync update <id> "New Objective"` to wipe the corrupted state and force the Product Manager persona to re-draft specifications without breaking the SDLC loop.
-
-### 3. Surgical Agent Dispatch
-You do not always need to run a full SDLC loop. 
-- Use the **Solo Agent** command (`./sync agent <id> <persona> "task"`) to dispatch specific agents to your workspace. 
-- Example: If the documentation is lacking, run `./sync agent my-app writer "Expand the API endpoints documentation"` instead of regenerating the entire project.
+Synapticity is an autonomous development platform that manages the entire software lifecycle. It acts as a digital engineering team, coordinating specialized agents to handle planning, coding, security auditing, and deployment. By combining local processing (via Ollama) with cloud-based fallback (via Gemini), it provides a secure and resilient environment for software production.
 
 ---
 
-## [LAUNCH] Quick Start Guide
+## Core Philosophy & Best Practices
 
-### 1. Core Installation
-Install the professional dependency stack required for telemetry, security scanning, and API adaptation:
+Synapticity is more than just a code generator; it implements a structured workflow modeled after professional engineering standards. For the best experience, keep these principles in mind:
+
+### 1. You are the Lead Architect
+While the system is autonomous, it is designed with a "Human-In-The-Loop" approach. 
+- **Review Before Approving:** The system pauses at major milestones (like architectural planning and implementation). Always check the `MISSION_LOG.md` in your workspace before authorizing the next phase.
+- **Audit the Path:** Use the `./sync audit` command to see exactly how the agents arrived at a decision.
+
+### 2. Focus on Scoped Objectives
+Autonomous agents perform best when their goals are clear and well-defined.
+- **Start Small:** Begin by generating foundational scaffolding.
+- **Refine as You Go:** If the project needs to pivot, use the `./sync update` command to re-draft specifications without losing your progress.
+
+### 3. Surgical Tasks
+You don't always need to run a full development cycle. You can dispatch a single agent for specific tasks, like refactoring a file or expanding documentation, using the standalone agent command.
+
+---
+
+## Getting Started
+
+### 1. Installation
+Install the core dependencies:
 
 ```bash
 pip install google-genai requests python-dotenv rich pydantic-settings cryptography bandit pytest
 ```
 
-### 2. Environment Configuration
-1. Install [Ollama](https://ollama.com/) locally and ensure it is running (`http://localhost:11434`). This is the primary intelligence engine.
-2. Copy `.env.example` to `.env`.
-3. Add your Gemini API keys for the Cloud Fallback network.
+### 2. Configuration
+1. **Local LLM:** Install [Ollama](https://ollama.com/) and ensure the service is running locally (`http://localhost:11434`).
+2. **Environment:** Copy `.env.example` to `.env`.
+3. **Cloud Fallback:** Add your Gemini API keys if you want a fallback for complex reasoning tasks.
 
-### 3. Health Verification
-Before launching missions, always verify that your environment, intelligence networks, and dependencies are cleanly connected:
+### 3. System Health Check
+Run the doctor command to verify everything is connected correctly:
 ```bash
 ./sync doctor
 ```
 
 ---
 
-## [CLI] Command Center Operations
-
-Manage your workspaces through the `main.py` CLI interface via the `./sync` alias.
+## Command Reference
 
 | Command | Usage Example | Description |
 | :--- | :--- | :--- |
-| **dash** | `./sync dash` | View all active mission titles, statuses, and live verdicts. |
-| **launch** | `./sync launch auth-svc "Build a JWT API"`| Initiates a new SDLC loop from scratch. |
-| **resume** | `./sync resume auth-svc` | Continues a paused or checkpointed mission. |
-| **update** | `./sync update auth-svc "Add OAuth2 support"` | Overrides the current objective and re-triggers the planning lifecycle. |
-| **audit** | `./sync audit auth-svc` | Displays the historical task list and predicts the upcoming agent queues. |
-| **agent** | `./sync agent auth-svc swe "Refactor utils.py"`| Sends a single agent directly into the workspace to perform a surgical task. |
-| **remove** | `./sync remove auth-svc` | Safely and permanently purges a mission directory from the workspace. |
-| **deploy** | `./sync deploy auth-svc` | Utilizes GitHub APIs to create a pristine repository and autonomously push pipelines. |
-| **ingest** | `./sync ingest agent http... name` | Resolves external `skill` or `agent` payload playbooks natively into the core engine. |
+| **dash** | `./sync dash` | View active missions and their current status. |
+| **launch** | `./sync launch auth-svc "Build a JWT API"`| Start a new development cycle. |
+| **resume** | `./sync resume auth-svc` | Continue a paused mission. |
+| **update** | `./sync update auth-svc "Add OAuth2 support"` | Adjust the objective and re-start the planning phase. |
+| **audit** | `./sync audit auth-svc` | Review the internal task list and upcoming queues. |
+| **agent** | `./sync agent auth-svc swe "Refactor utils.py"`| Send a specific agent for a one-off task. |
+| **remove** | `./sync remove auth-svc` | Delete a mission workspace. |
+| **review** | `./sync review bug-fix "security audit" C:/my-project` | Audit and patch an existing local project. |
+| **learn**  | `./sync learn auth-svc` | Analyze mission history to improve future agent performance. |
+| **deploy** | `./sync deploy auth-svc` | Create a GitHub repo and push the verified codebase. |
 
 ---
 
-## [SEC] Architecture & Security
+## Architecture & Security
 
-Synapticity enforces a **Zero-Defect Security Model**:
-1. **Sandboxed Runtimes:** Code synthesized by the Software Engineer persona is executed inside a simulated runtime.
-2. **Bandit Scans:** Static vulnerability analysis is run passively against all emitted code.
-3. **Healing Cycles (Max 3):** If code fails execution or fails the security scan, the `TESTER` and `ONCALL-ENGINEER` personas instruct the `SOFTWARE-ENGINEER` how to apply targeted remediation patches automatically.
+Synapticity is built on a "Zero-Defect" philosophy:
+1. **Sandboxed Execution:** All generated code is tested in an isolated environment before it ever touches your production workspace.
+2. **Security Scans:** Passively runs vulnerability analysis (Bandit) against all implementation blocks.
+3. **Self-Healing:** If code fails tests or scans, specialized QA agents identify the issue and instruct the Software Engineer to apply a fix automatically.
 
-> **Deep Dive:** For full architectural breakdowns, state-machine mechanics, and data flow diagrams, refer to the [architecture_map.md](architecture_map.md).
-
----
-*Developed for autonomous excellence. Build fearlessly.*
+For more technical details, refer to the [architecture_map.md](architecture_map.md), the [WHITE_PAPER.md](WHITE_PAPER.md), or the [Project Roadmap](tasks.txt).

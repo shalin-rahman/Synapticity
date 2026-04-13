@@ -66,7 +66,7 @@ class SkillRegistry:
         }
         
         # Core skills that should always be injected
-        active_skills = {"code-quality-linting"}
+        active_skills = {"code-quality-linting", "autonomous-lessons"}
         
         # Check folder names directly
         for folder in os.listdir(self.path):

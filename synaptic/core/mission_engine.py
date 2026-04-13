@@ -1,6 +1,6 @@
 """
-Mission Engine — thin orchestrator coordinating all mission sub-systems.
-Responsibility: phase sequencing only. All logic delegated to sub-components.
+Mission Orchestrator - A simplified controller that sequences the development workflow.
+It delegates state management, logging, and agent communication to specialized sub-components.
 """
 import os
 from synaptic.config import settings
@@ -21,7 +21,7 @@ from synaptic.utils.formatting import strip_markdown_backticks
 
 
 class MissionEngine:
-    """Coordinates the full SDLC lifecycle by delegating to focused sub-systems."""
+    """Manages the full development lifecycle by coordinating various specialized agents."""
 
     def __init__(self):
         # --- Model Routing ---
@@ -34,7 +34,7 @@ class MissionEngine:
             primary, fallback = cloud, None
         else:
             raise ConfigurationError(
-                "CRITICAL: Both Ollama and Gemini are INACTIVE. No intelligence engine available."
+                "Neither local (Ollama) nor cloud (Gemini) engines are active. Please check your configuration."
             )
 
         # --- Agents ---
@@ -45,7 +45,7 @@ class MissionEngine:
         self.writer   = AgentRunner(primary, settings.AGENT_DOCS,     fallback_model=fallback)
         self.devops   = AgentRunner(primary, settings.AGENT_DEVOPS,   fallback_model=fallback)
 
-        # --- Sub-Systems ---
+        # Internal tools for project management
         self._skills   = SkillRegistry()
         self._runtime  = RuntimeRunner()
         self._log      = MissionLogger()
@@ -55,8 +55,8 @@ class MissionEngine:
     # Public API
     # ------------------------------------------------------------------
 
-    def execute_mission(self, mission_id: str, objective: str = None) -> None:
-        """Starts or resumes a mission, coordinating all four SDLC phases."""
+    def run(self, mission_id: str, objective: str = None) -> None:
+        """Starts or continues a development task."""
         path = os.path.join(settings.WORKSPACE_PATH, mission_id)
         os.makedirs(path, exist_ok=True)
 
@@ -67,8 +67,8 @@ class MissionEngine:
         if objective:
             state["objective"] = objective
 
-        synaptic_log.info(f"MISSION START: {mission_id} | Objective: {state['objective']}")
-        print(f"[LAUNCH] synaptic Engaged | Mission: {mission_id} (Phase: {state.get('phase', 'INITIAL')})")
+        synaptic_log.info(f"Starting work: {mission_id}")
+        print(f"[START] Project {mission_id} (Phase: {state.get('phase', 'INITIAL')})")
 
         try:
             # Phase 1 — Planning
@@ -78,21 +78,21 @@ class MissionEngine:
                 state["phase"] = "PLANNED"
                 state_mgr.save(state)
                 self._log.persist(path, state)
-                self._gate.request("Mission Architecture Ready", state["phase"])
+                self._gate.request("Design specs are ready for review", state["phase"])
 
             # Phase 2 — Implementation
             if not state.get("code"):
                 context       = self._skills.inject(state["objective"] + " " + state["specs"])
-                raw_code      = self.coder.execute(
+                raw_code      = self.coder.run(
                     state["specs"], context,
                     task="Synthesizing Source Code", mission_id=mission_id
                 )
                 state["code"] = strip_markdown_backticks(raw_code)
-                self._log.log(state, "software-engineer", "Synthesized implementation from specs.", state["code"])
+                self._log.log(state, "software-engineer", "Generated code based on specs.", state["code"])
                 state["phase"] = "DEVELOPED"
                 state_mgr.save(state)
                 self._log.persist(path, state)
-                self._gate.request("Code Generated", state["phase"])
+                self._gate.request("Initial code has been generated", state["phase"])
 
             # Phase 3 — Healing & Verification
             if state.get("phase") not in ("VERIFIED", "COMPLETED"):
@@ -112,7 +112,7 @@ class MissionEngine:
             state["last_error"] = str(e)
             state_mgr.save(state)
             raise WorkflowError(
-                f"Mission '{mission_id}' failed during Phase '{state.get('phase', 'START')}': {e}"
+                f"Project '{mission_id}' stopped at '{state.get('phase', 'START')}': {e}"
             )
 
     def execute_single_agent(self, mission_id: str, agent_name: str, task: str) -> str:
@@ -128,9 +128,9 @@ class MissionEngine:
         context   = state.get("specs", "") + "\n\n" + state.get("code", "")
         skills    = self._skills.inject(task + " " + context)
 
-        print(f"[LAUNCH] Dispatching solo agent: {agent_name.upper()} on Mission: {mission_id}")
-        output = runner.execute(
-            f"SOLO DIRECTIVE:\n{task}\n\nWORKSPACE CONTEXT:\n{context}\n\nSKILLS:\n{skills}",
+        print(f"[RUN] Sending {agent_name.upper()} into {mission_id}...")
+        output = runner.run(
+            f"DIRECTIVE:\n{task}\n\nCONTEXT:\n{context}\n\nSKILLS:\n{skills}",
             task=task, mission_id=mission_id
         )
 
@@ -139,7 +139,7 @@ class MissionEngine:
         self._log.persist(path, state)
 
         from rich.console import Console
-        Console().print(f"[OK] [bold green]{agent_name.upper()}[/] completed task. Output appended to MISSION_LOG.md.")
+        Console().print(f"[OK] [bold green]{agent_name.upper()}[/] finished the task. Results are in the log.")
         return output
 
     # ------------------------------------------------------------------
@@ -150,15 +150,15 @@ class MissionEngine:
         """Runs documentation, CI/CD synthesis, and workspace commit."""
         synaptic_log.info(f"MISSION FINALIZING: {mission_id}")
 
-        print("[DOCS] Finalizing technical documentation...")
-        docs = self.writer.execute(
+        print("[DOCS] Writing technical documentation...")
+        docs = self.writer.run(
             f"Objective: {state['objective']}\nSpecs: {state['specs']}\nFinal Code: {state['code']}",
             task="Drafting Technical Hand-off", mission_id=mission_id
         )
         self._log.log(state, "writer", "Generated technical hand-off documentation.", docs)
 
-        print("[DEVOPS] Synthesizing CI/CD pipeline...")
-        pipeline = self.devops.execute(
+        print("[CI] Generating the CI/CD pipeline...")
+        pipeline = self.devops.run(
             f"Objective: {state['objective']}\nRepository Tech Stack Code:\n{state['code']}",
             task="Architecting GitHub Actions Pipeline", mission_id=mission_id
         )
@@ -171,4 +171,4 @@ class MissionEngine:
         state["phase"] = "COMPLETED"
         state_mgr.save(state)
         self._log.persist(path, state)
-        print(f"[DONE] Mission Accomplished: {mission_id}")
+        print(f"[DONE] Finished: {mission_id}")
