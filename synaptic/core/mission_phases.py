@@ -84,6 +84,7 @@ class HealingCyclePhase:
                 return code
 
             state["verdict"] = "[bold red][FAIL] FAIL[/]"
+            state["repair_count"] = state.get("repair_count", 0) + 1
             print("[REPAIR] Issues found. Starting automatic repairs...")
             directive = (
                 f"IDE_PROBLEMS:\n{quality['problems']}\n\nQA_DIRECTIVE:\n{qa_result}"

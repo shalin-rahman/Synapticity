@@ -11,9 +11,12 @@ from synaptic.cli.handlers.review import handle_review
 from synaptic.cli.handlers.learning import handle_learn
 from synaptic.utils.doctor import SynapticDoctor
 
+from synaptic.cli.handlers.stats import handle_stats
+
 COMMAND_REGISTRY: dict[str, callable] = {
     "dash":    show_dashboard,
     "help":    show_help,
+    "stats":   handle_stats,
     "doctor":  SynapticDoctor.run_full_service,
     "launch":  handle_launch,
     "resume":  handle_resume,

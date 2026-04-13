@@ -44,6 +44,7 @@ def show_help() -> None:
     console.print("\n[bold]Usage Commands:[/]")
     commands = [
         ("dash",                       "View all projects and their current status"),
+        ("stats",                      "View performance analytics and scorecards"),
         ("launch <id> <goal>",         "Start a new project development cycle"),
         ("resume <id>",                "Continue work on an existing project"),
         ("update <id> <goal>",         "Modify project goals and trigger a re-design"),

@@ -8,13 +8,20 @@ from synaptic.config import settings
 from synaptic.core.agent_runner import AgentRunner
 from synaptic.models.gemini import GeminiAdapter
 from synaptic.models.ollama import OllamaAdapter
+from synaptic.models.claude import ClaudeAdapter
 
 class ReflectionEngine:
     """Analyzes recent project logs to update engineering standards."""
 
     def __init__(self):
         # Reflector uses the best available model for deep analysis
-        model = GeminiAdapter() if settings.GEMINI_ACTIVE else OllamaAdapter()
+        if settings.CLAUDE_ACTIVE:
+            model = ClaudeAdapter()
+        elif settings.GEMINI_ACTIVE:
+            model = GeminiAdapter()
+        else:
+            model = OllamaAdapter()
+            
         self.reflector = AgentRunner(model, "reflector.md")
         self.lesson_dir = os.path.join(settings.SKILL_PATH, "autonomous-lessons")
         self.lesson_path = os.path.join(self.lesson_dir, "skill.md")

@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     OLLAMA_ACTIVE: bool = True
     OLLAMA_URL: str = "http://localhost:11434/api/generate"
     OLLAMA_MODEL: str = "qwen2.5-coder:7b"
+
+    # --- Claude (Anthropic) Configuration ---
+    CLAUDE_ACTIVE: bool = False
+    CLAUDE_MODEL: str = "claude-3-5-sonnet-20240620"
     
     # --- Path Configuration ---
     AGENT_PATH: str = "agents"
@@ -57,6 +61,11 @@ class Settings(BaseSettings):
     USAGE_LOG_FILE: str = "usage_log.json"
     STATE_FILE: str = "mission_state.json"
     LOG_LEVEL: str = "INFO"
+
+    @property
+    def ANTHROPIC_API_KEY(self) -> str:
+        """Retrieves the Anthropic API key from environment."""
+        return os.getenv("ANTHROPIC_API_KEY", "")
     
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

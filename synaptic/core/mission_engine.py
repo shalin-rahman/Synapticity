@@ -3,9 +3,12 @@ Mission Orchestrator - A simplified controller that sequences the development wo
 It delegates state management, logging, and agent communication to specialized sub-components.
 """
 import os
+import time
+import json
 from synaptic.config import settings
 from synaptic.models.gemini import GeminiAdapter
 from synaptic.models.ollama import OllamaAdapter
+from synaptic.models.claude import ClaudeAdapter
 from synaptic.core.agent_runner import AgentRunner
 from synaptic.core.skill_registry import SkillRegistry
 from synaptic.core.runtime_runner import RuntimeRunner
@@ -14,6 +17,7 @@ from synaptic.core.mission_logger import MissionLogger
 from synaptic.core.mission_workspace import MissionWorkspace
 from synaptic.core.mission_gate import ApprovalGate
 from synaptic.core.mission_phases import PlanningPhase, HealingCyclePhase
+from synaptic.core.analytics import PerformanceAnalytics
 from synaptic.core.agent_dispatcher import resolve_runner
 from synaptic.utils.exceptions import ConfigurationError, WorkflowError
 from synaptic.utils.logger import synaptic_log
@@ -25,17 +29,9 @@ class MissionEngine:
 
     def __init__(self):
         # --- Model Routing ---
-        cloud = GeminiAdapter() if settings.GEMINI_ACTIVE else None
-        local = OllamaAdapter() if settings.OLLAMA_ACTIVE else None
+        self._analytics = PerformanceAnalytics()
+        primary, fallback = self._resolve_optimal_routing()
 
-        if settings.OLLAMA_ACTIVE:
-            primary, fallback = local, cloud
-        elif settings.GEMINI_ACTIVE:
-            primary, fallback = cloud, None
-        else:
-            raise ConfigurationError(
-                "Neither local (Ollama) nor cloud (Gemini) engines are active. Please check your configuration."
-            )
 
         # --- Agents ---
         self.planner  = AgentRunner(primary, settings.AGENT_PM,       fallback_model=fallback)
@@ -57,6 +53,7 @@ class MissionEngine:
 
     def run(self, mission_id: str, objective: str = None) -> None:
         """Starts or continues a development task."""
+        start_time = time.time()
         path = os.path.join(settings.WORKSPACE_PATH, mission_id)
         os.makedirs(path, exist_ok=True)
 
@@ -106,9 +103,37 @@ class MissionEngine:
             if state.get("phase") != "COMPLETED":
                 self._finalize(path, state, mission_id, workspace, state_mgr)
 
+            # --- Analytics Success Log ---
+            duration = time.time() - start_time
+            self._analytics.log_mission_result(
+                mission_id=mission_id,
+                success=True,
+                repairs=state.get("repair_count", 0),
+                duration=duration,
+                model=settings.OLLAMA_MODEL if settings.OLLAMA_ACTIVE else (settings.CLAUDE_MODEL if settings.CLAUDE_ACTIVE else settings.GEMINI_MODEL)
+            )
+
         except WorkflowError:
+            # Analytics Failure Log
+            duration = time.time() - start_time
+            self._analytics.log_mission_result(
+                mission_id=mission_id,
+                success=False,
+                repairs=state.get("repair_count", 0),
+                duration=duration,
+                model=settings.OLLAMA_MODEL if settings.OLLAMA_ACTIVE else "Unknown"
+            )
             raise
         except Exception as e:
+            # Analytics Failure Log
+            duration = time.time() - start_time
+            self._analytics.log_mission_result(
+                mission_id=mission_id,
+                success=False,
+                repairs=state.get("repair_count", 0),
+                duration=duration,
+                model=settings.OLLAMA_MODEL if settings.OLLAMA_ACTIVE else "Unknown"
+            )
             state["last_error"] = str(e)
             state_mgr.save(state)
             raise WorkflowError(
@@ -145,6 +170,44 @@ class MissionEngine:
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
+
+    def _resolve_optimal_routing(self) -> tuple:
+        """Determines the best primary/fallback pair based on health and history."""
+        gemini = GeminiAdapter() if settings.GEMINI_ACTIVE else None
+        claude = ClaudeAdapter() if settings.CLAUDE_ACTIVE else None
+        ollama = OllamaAdapter() if settings.OLLAMA_ACTIVE else None
+
+        cloud = claude if settings.CLAUDE_ACTIVE else (gemini if settings.GEMINI_ACTIVE else None)
+
+        # Basic hard-coded preference if everything is healthy
+        p, f = None, None
+        if settings.OLLAMA_ACTIVE:
+            p, f = ollama, cloud
+        elif cloud:
+            p, f = cloud, (gemini if claude and settings.GEMINI_ACTIVE else None)
+        else:
+            raise ConfigurationError("No intelligence engines available.")
+
+        # --- Autonomous Role Rotation Logic ---
+        # Check if the primary model has a history of critical failure
+        if os.path.exists(self._analytics.stats_file):
+            try:
+                with open(self._analytics.stats_file, "r") as r:
+                    stats = json.load(r)
+                
+                model_key = type(p).__name__.replace("Adapter", "")
+                if model_key == "Ollama": model_key = settings.OLLAMA_MODEL
+                
+                m_stats = stats.get("agent_metrics", {}).get(model_key)
+                if m_stats and m_stats["total"] >= 3:
+                    reliability = (1 - m_stats["failures"]/m_stats["total"]) * 100
+                    if reliability < 40 and f:
+                        print(f"[WARN] {model_key} reliability is low ({reliability}%). Rotating to fallback...")
+                        p = f # Rotate primary to fallback
+            except:
+                pass
+
+        return p, f
 
     def _finalize(self, path, state, mission_id, workspace: MissionWorkspace, state_mgr: MissionStateManager) -> None:
         """Runs documentation, CI/CD synthesis, and workspace commit."""

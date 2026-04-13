@@ -4,6 +4,7 @@ from synaptic.models.base import AbstractModel
 from synaptic.utils.exceptions import ConfigurationError, ModelProviderError
 from synaptic.utils.logger import synaptic_log
 from synaptic.utils.memory_logger import MemoryLogger
+from synaptic.core.analytics import PerformanceAnalytics
 import threading
 import time
 class AgentRunner:
@@ -16,6 +17,7 @@ class AgentRunner:
         self.model = model
         self.persona_file = persona_file
         self.fallback_model = fallback_model
+        self._analytics = PerformanceAnalytics()
 
     def run(self, prompt: str, context: str = "", task: str = "Processing", mission_id: str = None) -> str:
         """Processes a prompt through the chosen persona, using optional context."""
@@ -51,10 +53,14 @@ class AgentRunner:
             t = threading.Thread(target=_heartbeat, daemon=True)
             t.start()
             try:
+                inf_start = time.time()
                 result = self.model.generate(system_instruction, final_prompt)
+                inf_duration = time.time() - inf_start
+                
                 done_event.set()
+                self._analytics.log_inference(provider_name, inf_duration)
                 MemoryLogger.log_interaction(mission_id, agent_name, task, provider_name, system_instruction, final_prompt, result)
-                console.print(f"[bold green][OK][/] {agent_name}: {task} finished.")
+                console.print(f"[bold green][OK][/] {agent_name}: {task} finished ({inf_duration:.2f}s).")
                 return result
             except (ModelProviderError, ConfigurationError) as e:
                 done_event.set()
