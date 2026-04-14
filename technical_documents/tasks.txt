@@ -164,7 +164,7 @@
 ## Phase 18: Performance & Async Optimization
 - [x] Implement **Parallel Verification**: QA and Security agents now dispatch simultaneously in the Healing Cycle
 - [ ] Refactor Model Adapters for `asyncio` compatibility to eliminate I/O blocking during long LLM calls
-- [ ] Implement Turbo-Remediation: Automated parser to strip common syntax/markdown errors before verification
+- [x] Implement Turbo-Remediation: Automated parser for common technical syntax/markdown cleanup
 - [ ] Persistent Resource Cache: Index common library patterns to reduce PM/SWE reasoning overhead
 
 ## Phase 19: Autonomous Self-Learning & Meta-Cognition
@@ -174,10 +174,10 @@
 - [x] Auto-inject `skills/autonomous-lessons.md` into every new mission context for continuous improvement
 
 ## Phase 20: Role Job Performance Analytics
-- [ ] Implement Agent Performance Scorecards (Success/Fix/Failure metrics per persona)
-- [ ] Implement `synaptic/core/analytics.py`: Track tokens, latency, and "Stress Level" per role
-- [ ] Implement `./sync stats <mission_id>`: Visual dashboard of agent efficiency
-- [ ] Autonomous Role Rotation: If SWE fails repeatedly, attempt a different model provider for that role specifically
+- [x] Implement Agent Performance Scorecards (Success/Fix/Failure metrics per persona)
+- [x] Implement `synaptic/core/analytics.py`: Track tokens, latency, and "Stress Level" per role (v3.0)
+- [x] Implement `./sync stats`: Visual dashboard of agent reliability and model health
+- [x] Autonomous Role Rotation: Dynamically promote fallbacks if primary scores drop below 40%
 
 ---
 

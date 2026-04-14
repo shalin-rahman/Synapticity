@@ -23,6 +23,15 @@ You don't always need to run a full development cycle. You can dispatch a single
 
 ---
 
+## 🌿 The "Free-Forever" Setup
+Synapticity is optimized for users who want to bypass private API costs associated with tools like Claude or GPT.
+
+*   **Google's Gemma (or Qwen/Llama):** Acts as the open-weights "engine," which is free to download and run.
+*   **Ollama:** Used to run these high-IQ models locally on your machine with zero latency.
+*   **The Framework Advantage:** Synapticity is natively configured to use Ollama's local endpoints as the primary driver, providing a "Claude Code"-like experience without the Anthropic subscription fees.
+
+---
+
 ## Getting Started
 
 ### 1. Installation
@@ -69,4 +78,8 @@ Synapticity is built on a "Zero-Defect" philosophy:
 2. **Security Scans:** Passively runs vulnerability analysis (Bandit) against all implementation blocks.
 3. **Self-Healing:** If code fails tests or scans, specialized QA agents identify the issue and instruct the Software Engineer to apply a fix automatically.
 
-For more technical details, refer to the [architecture_map.md](architecture_map.md), the [WHITE_PAPER.md](WHITE_PAPER.md), or the [Project Roadmap](tasks.txt).
+For more technical details, refer to the following resources in the [technical_documents](technical_documents/) directory:
+*   **[Architecture Map](technical_documents/architecture_map.md)**: System design and state machine.
+*   **[White Paper](technical_documents/WHITE_PAPER.md)**: The philosophy of the framework.
+*   **[Free Setup Guide](technical_documents/FREE_SETUP.md)**: Running things for zero cost.
+*   **[Project Roadmap](technical_documents/tasks.txt)**: Upcoming features and known issues.

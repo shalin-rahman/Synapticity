@@ -9,18 +9,22 @@ from synaptic.core.agent_runner import AgentRunner
 from synaptic.models.gemini import GeminiAdapter
 from synaptic.models.ollama import OllamaAdapter
 from synaptic.models.claude import ClaudeAdapter
+from synaptic.utils.exceptions import ConfigurationError
 
 class ReflectionEngine:
     """Analyzes recent project logs to update engineering standards."""
 
     def __init__(self):
-        # Reflector uses the best available model for deep analysis
-        if settings.CLAUDE_ACTIVE:
+        """Initializes the reflection agent using the optimal available model."""
+        # Standardized routing: Ollama-first if active, then Claude, then Gemini
+        if settings.OLLAMA_ACTIVE:
+            model = OllamaAdapter()
+        elif settings.CLAUDE_ACTIVE:
             model = ClaudeAdapter()
         elif settings.GEMINI_ACTIVE:
             model = GeminiAdapter()
         else:
-            model = OllamaAdapter()
+            raise ConfigurationError("No intelligence engines available for Reflection.")
             
         self.reflector = AgentRunner(model, "reflector.md")
         self.lesson_dir = os.path.join(settings.SKILL_PATH, "autonomous-lessons")

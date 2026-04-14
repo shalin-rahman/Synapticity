@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     # --- Local LLM (Ollama) Configuration ---
     OLLAMA_ACTIVE: bool = True
     OLLAMA_URL: str = "http://localhost:11434/api/generate"
-    OLLAMA_MODEL: str = "qwen2.5-coder:7b"
+    OLLAMA_MODEL: str = "gemma4:latest"
 
     # --- Claude (Anthropic) Configuration ---
     CLAUDE_ACTIVE: bool = False
@@ -82,7 +82,7 @@ class Settings(BaseSettings):
 
     @property
     def IS_HEALTHY(self) -> bool:
-        """System health check: true if core credentials exist."""
-        return len(self.GEMINI_KEYS) > 0
+        """System health check: true if core engines are configured."""
+        return self.OLLAMA_ACTIVE or len(self.GEMINI_KEYS) > 0 or self.CLAUDE_ACTIVE
 
 settings = Settings()

@@ -99,41 +99,16 @@ class MissionEngine:
                 state_mgr.save(state)
                 self._log.persist(path, state)
 
-            # Phase 4 — Documentation & CI/CD
             if state.get("phase") != "COMPLETED":
                 self._finalize(path, state, mission_id, workspace, state_mgr)
 
-            # --- Analytics Success Log ---
-            duration = time.time() - start_time
-            self._analytics.log_mission_result(
-                mission_id=mission_id,
-                success=True,
-                repairs=state.get("repair_count", 0),
-                duration=duration,
-                model=settings.OLLAMA_MODEL if settings.OLLAMA_ACTIVE else (settings.CLAUDE_MODEL if settings.CLAUDE_ACTIVE else settings.GEMINI_MODEL)
-            )
+            self._log_mission_performance(mission_id, state, time.time() - start_time, success=True)
 
         except WorkflowError:
-            # Analytics Failure Log
-            duration = time.time() - start_time
-            self._analytics.log_mission_result(
-                mission_id=mission_id,
-                success=False,
-                repairs=state.get("repair_count", 0),
-                duration=duration,
-                model=settings.OLLAMA_MODEL if settings.OLLAMA_ACTIVE else "Unknown"
-            )
+            self._log_mission_performance(mission_id, state, time.time() - start_time, success=False)
             raise
         except Exception as e:
-            # Analytics Failure Log
-            duration = time.time() - start_time
-            self._analytics.log_mission_result(
-                mission_id=mission_id,
-                success=False,
-                repairs=state.get("repair_count", 0),
-                duration=duration,
-                model=settings.OLLAMA_MODEL if settings.OLLAMA_ACTIVE else "Unknown"
-            )
+            self._log_mission_performance(mission_id, state, time.time() - start_time, success=False)
             state["last_error"] = str(e)
             state_mgr.save(state)
             raise WorkflowError(
@@ -208,6 +183,19 @@ class MissionEngine:
                 pass
 
         return p, f
+
+    def _log_mission_performance(self, mission_id: str, state: dict, duration: float, success: bool):
+        """Standardized performance logging for mission analytics."""
+        model_name = settings.OLLAMA_MODEL if settings.OLLAMA_ACTIVE else (
+            settings.CLAUDE_MODEL if settings.CLAUDE_ACTIVE else settings.GEMINI_MODEL
+        )
+        self._analytics.log_mission_result(
+            mission_id=mission_id,
+            success=success,
+            repairs=state.get("repair_count", 0),
+            duration=duration,
+            model=model_name
+        )
 
     def _finalize(self, path, state, mission_id, workspace: MissionWorkspace, state_mgr: MissionStateManager) -> None:
         """Runs documentation, CI/CD synthesis, and workspace commit."""
