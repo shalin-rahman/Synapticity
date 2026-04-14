@@ -4,6 +4,82 @@ This document serves as the definitive technical reference for the Synapticity a
 
 ---
 
+## System Component Map
+
+```mermaid
+flowchart TD
+    %% Component Boundaries
+    subgraph CLI [CLI Boundary]
+        Main["main.py"]
+        Registry["Command Registry"]
+        Handlers["Command Handlers"]
+    end
+
+    subgraph CORE [Orchestration Boundary]
+        Engine["MissionEngine"]
+        Review["ProjectReviewEngine"]
+        SelfLearn["ReflectionEngine"]
+        Phases["Mission Phases"]
+    end
+
+    subgraph AGENT [Agent Management]
+        Dispatcher["Agent Dispatcher"]
+        Runner["AgentRunner"]
+    end
+
+    subgraph STATE [State and Sandbox Boundary]
+        Workspace["MissionWorkspace"]
+        StateMgr["MissionStateManager"]
+        Runtime["RuntimeRunner"]
+        Skills["SkillRegistry"]
+    end
+
+    subgraph MODELS [Intelligence Boundary]
+        Base["AbstractModel"]
+        Ollama["OllamaAdapter"]
+        Gemini["GeminiAdapter"]
+        Claude["ClaudeAdapter"]
+    end
+
+    subgraph UTILS [Utilities Boundary]
+        Deployer["GitDeployer"]
+        Indexer["ProjectIndexer"]
+        Logger["MemoryLogger"]
+        Doctor["SynapticDoctor"]
+    end
+
+    %% Flow Dynamics
+    Main --> Registry
+    Registry --> Handlers
+    Handlers -->|Launch or Resume| Engine
+    Handlers -->|Review| Review
+    Handlers -->|Learn| SelfLearn
+
+    Engine --> Phases
+    Engine --> Dispatcher
+    Review --> Dispatcher
+    SelfLearn --> Dispatcher
+
+    Phases --> Runner
+    Dispatcher --> Runner
+
+    Runner -->|Loads contextual| Skills
+    Runner --> Base
+    Base <|-- Ollama
+    Base <|-- Gemini
+    Base <|-- Claude
+
+    Phases -->|Executes generated code| Runtime
+    Engine -->|Loads or Saves| StateMgr
+    Engine -->|Writes artifacts| Workspace
+
+    Review -->|Scans user code| Indexer
+    Engine -->|Pushes to GitHub| Deployer
+    Runner -->|Captures prompts| Logger
+```
+
+---
+
 ## 1. How a Mission Runs (Operational Workflows)
 
 Synapticity is fundamentally a **State-Driven Workflow Engine**. It transitions through five discrete phases, governed by strict verification gates.
