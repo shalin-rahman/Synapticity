@@ -1,25 +1,35 @@
 import logging
 import os
+import sys
 from synaptic.config import settings
 
 def get_logger(name: str):
-    """Returns a configured logger for the synaptic framework."""
+    """
+    Returns a resilient logger. 
+    Falls back to StreamHandler (Console) if FileSystem is locked/read-only.
+    """
     logger = logging.getLogger(name)
     logger.setLevel(settings.LOG_LEVEL)
     
     if not logger.handlers:
-        # File Handler (Audit Log)
-        os.makedirs("logs", exist_ok=True)
-        fh = logging.FileHandler("logs/synaptic.log")
-        fh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-        logger.addHandler(fh)
+        # Final formatting
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         
-        # Console Handler (Summary)
-        ch = logging.StreamHandler()
+        # [SHIELD] Attempt File Handling
+        try:
+            os.makedirs("logs", exist_ok=True)
+            fh = logging.FileHandler("logs/synaptic.log", encoding='utf-8')
+            fh.setFormatter(formatter)
+            logger.addHandler(fh)
+        except Exception as e:
+            # Fallback to console only if file system fails
+            pass
+            
+        # Standard Console Summary
+        ch = logging.StreamHandler(sys.stdout)
         ch.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
-        # We only want INFO+ on console to avoid cluttering the CLI
         ch.setLevel(logging.INFO)
-        # Note: In a production CLI, you might suppress this for rich output
+        logger.addHandler(ch)
     
     return logger
 

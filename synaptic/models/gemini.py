@@ -31,7 +31,11 @@ class GeminiAdapter(AbstractModel):
     def _init_client(self):
         if not self.keys:
             return None
-        return genai.Client(api_key=self.keys[self.index])
+        try:
+            return genai.Client(api_key=self.keys[self.index])
+        except Exception as e:
+            synaptic_log.error(f"Gemini Client Initialization Failed: {e}")
+            return None
 
     def rotate(self):
         """Swaps to the next key in the pool to circumvent rate limits."""
@@ -41,7 +45,7 @@ class GeminiAdapter(AbstractModel):
             json.dump({"index": self.index}, f)
         self.client = genai.Client(api_key=self.keys[self.index])
         synaptic_log.warning(f"Rotating Gemini API Key to account index: {self.index}")
-        print(f"🔄 synaptic Rotation: Active Account {self.index + 1}")
+        print(f"[ROTATION] Synaptic Rotation: Active Account {self.index + 1}")
 
     def generate(self, system_instruction: str, prompt: str) -> str:
         """
@@ -65,11 +69,22 @@ class GeminiAdapter(AbstractModel):
                 self._update_log()
                 return response.text
                 
-            except exceptions.ResourceExhausted:
-                # Hot-swap to the next account when quota is hit
-                self.rotate()
             except Exception as e:
-                raise ModelProviderError(f"Gemini API failed: {e}")
+                err_str = str(e).upper()
+                if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                    synaptic_log.warning(f"Synaptic Quota Hit: {e}. Rotating keys and retrying...")
+                    self.rotate()
+                    # If we only have one key, we MUST wait for the quota window to reset
+                    if len(self.keys) <= 1:
+                        print("[WAIT] Only one Gemini key detected. Sleeping 20s to bypass rate limit...")
+                        time.sleep(20)
+                    continue
+
+                # Log the raw error but provide a clean message to the runner
+                synaptic_log.error(f"Gemini API Raw Error: {e}")
+                
+                msg = "Quota Exceeded (429)" if "429" in str(e) else f"API Error ({type(e).__name__})"
+                raise ModelProviderError(f"Gemini failed: {msg}")
 
     def _update_log(self):
         log_file = settings.USAGE_LOG_FILE
