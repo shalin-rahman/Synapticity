@@ -57,33 +57,44 @@ class ProjectReviewEngine:
             mission_id=mission_id
         )
 
-        # --- Compile full report ---
-        report = (
-            f"# Synaptic External Project Review\n\n"
-            f"**Project:** `{project_path}`\n"
-            f"**Goal:** {goal}\n"
-            f"**Files Reviewed:** {len(files)}\n\n"
-            f"---\n\n"
-            f"## Architecture & Quality Review\n\n{arch_review}\n\n"
-            f"---\n\n"
-            f"## Proposed Improvements\n\n{improvement}\n\n"
-            f"---\n\n"
-            f"## Security Assessment\n\n{sec_review}\n"
-        )
-
-        # --- Persist review log into mission workspace ---
-        workspace  = os.path.join(settings.WORKSPACE_PATH, mission_id)
-        os.makedirs(workspace, exist_ok=True)
-        report_path = os.path.join(workspace, "REVIEW_REPORT.md")
-        with open(report_path, "w", encoding="utf-8") as f:
-            f.write(report)
-        print(f"[REVIEW] Full report saved: {report_path}")
+        # --- Compile and Save results ---
+        report = self._generate_summary_report(project_path, goal, files, arch_review, improvement, sec_review)
+        self._persist_review_artifact(mission_id, report)
 
         # --- Optional: Apply patches back to target project ---
         if apply_changes:
             self._apply_patches(project_path, improvement)
 
         return report
+
+    # ------------------------------------------------------------------
+    # Private Helpers
+    # ------------------------------------------------------------------
+
+    def _generate_summary_report(self, path: str, goal: str, files: list, arch: str, improv: str, sec: str) -> str:
+        """Constructs a professional markdown report from the review findings."""
+        return (
+            f"# Synaptic External Project Review\n\n"
+            f"**Project:** `{path}`\n"
+            f"**Goal:** {goal}\n"
+            f"**Files Reviewed:** {len(files)}\n\n"
+            f"---\n\n"
+            f"## Architecture & Quality Review\n\n{arch}\n\n"
+            f"---\n\n"
+            f"## Proposed Improvements\n\n{improv}\n\n"
+            f"---\n\n"
+            f"## Security Assessment\n\n{sec}\n"
+        )
+
+    def _persist_review_artifact(self, mission_id: str, report: str) -> str:
+        """Saves the review report to the mission workspace."""
+        workspace = os.path.join(settings.WORKSPACE_PATH, mission_id)
+        os.makedirs(workspace, exist_ok=True)
+        report_path = os.path.join(workspace, "REVIEW_REPORT.md")
+        with open(report_path, "w", encoding="utf-8") as f:
+            f.write(report)
+        print(f"[REVIEW] Full report saved: {report_path}")
+        return report_path
 
     def _apply_patches(self, project_path: str, improvement_output: str) -> None:
         """

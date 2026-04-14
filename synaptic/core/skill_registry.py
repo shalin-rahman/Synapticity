@@ -47,26 +47,35 @@ class SkillRegistry:
         injected = ""
         target_normalized = target_str.lower()
         
-        # Mapping base keywords to skill folders
+        # Mapping base keywords to skill folders (Foundational Smart Thinking)
         skill_triggers = {
-            "test": ["testing-strategies"],
-            "qa ": ["testing-strategies"],
-            "api": ["api-design"],
+            "test": ["testing-strategies", "shift-left-testing"],
+            "qa ": ["testing-strategies", "shift-left-testing"],
+            "api": ["api-design", "agile-product-management"],
             "rest": ["api-design"],
             "db ": ["sqlalchemy-expert", "domain-driven-design"],
             "database": ["sqlalchemy-expert"],
-            "secure": ["ai-security-safety", "cryptography-expert", "security-scanner"],
-            "security": ["ai-security-safety", "cryptography-expert", "security-scanner"],
-            "architecture": ["clean-architecture", "solid-design-patterns"],
-            "design": ["solid-design-patterns", "domain-driven-design"],
+            "secure": ["ai-security-safety", "cryptography-expert", "security-scanner", "devsecops-hardening"],
+            "security": ["ai-security-safety", "cryptography-expert", "security-scanner", "devsecops-hardening"],
+            "architecture": ["clean-architecture", "solid-design-patterns", "zero-defect-engineering"],
+            "design": ["solid-design-patterns", "domain-driven-design", "zero-defect-engineering"],
+            "plan": ["agile-product-management"],
+            "goal": ["agile-product-management"],
+            "doc": ["technical-writing-standards"],
+            "write": ["technical-writing-standards"],
             "microservice": ["microservices"],
             "agent": ["agentic-architecture", "multi-agent-orchestration"],
             "llm": ["llm-engineering", "data-privacy"],
             "rag": ["rag-implementation"]
         }
         
-        # Core skills that should always be injected
-        active_skills = {"code-quality-linting", "autonomous-lessons"}
+        # Core foundational skills that should ALWAYS be injected for every mission
+        active_skills = {
+            "code-quality-linting", 
+            "autonomous-lessons",
+            "zero-defect-engineering",
+            "devsecops-hardening"
+        }
         
         # Check folder names directly
         for folder in os.listdir(self.path):

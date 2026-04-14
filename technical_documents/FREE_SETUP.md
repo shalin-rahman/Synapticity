@@ -27,5 +27,24 @@ CLAUDE_ACTIVE=False
 OLLAMA_MODEL=gemma4:latest
 ```
 
+### 4. Performance Optimization & Slowness Solutions
+If you experience "Local model is taking a long time to load" or overall sluggishness, follow these industry-standard optimizations:
+
+*   **VRAM Persistence (Keep-Alive)**: By default, Ollama unloads models after 5 minutes of inactivity. 
+    *   **The Solution**: Set the environment variable `OLLAMA_KEEP_ALIVE=-1` on your OS. This locks the model in your GPU/RAM indefinitely, eliminating "Cold Start" delays.
+    *   *Synapticity Hack*: The framework now automatically sends a "Warp Speed" pre-warming signal during startup to ensure the model is hot before your first mission begins.
+*   **Hardware Alignment Check**: 
+    *   Ensure your model fits entirely in **VRAM** (GPU memory). If it spills into System RAM or swap, performance drops by 10x-100x.
+    *   Use **NVMe SSDs** for model storage. Mechanical HDDs cause extreme loading times.
+*   **Context Window Tuning**: Synapticity uses a default `num_ctx: 8192`. If your hardware is older, try reducing this in `ollama.py` to `4096`.
+
+### 5. Community & Documentation
+For deep-dives into local AI performance and community support:
+*   **Official Ollama Documentation**: [ollama.com/docs](https://ollama.com/docs)
+*   **Troubleshooting Hub**: [Ollama GitHub Issues](https://github.com/ollama/ollama/issues)
+*   **Community Forums**: 
+    *   [r/LocalLLaMA](https://www.reddit.com/r/LocalLLaMA/) (Best for hardware tuning)
+    *   [Ollama Discord](https://discord.gg/ollama) (Real-time support)
+
 ---
 *Developed for autonomous excellence at zero cost.*

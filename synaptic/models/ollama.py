@@ -25,6 +25,30 @@ class OllamaAdapter(AbstractModel):
         self.tags_url = self.url.replace("/generate", "/tags")
         self.model = settings.OLLAMA_MODEL
         self._servicing = False
+        
+        # Initiate non-blocking warp-speed load
+        import threading
+        threading.Thread(target=self.pre_warm, daemon=True).start()
+
+    def pre_warm(self):
+        """Sends a warm-up signal to Ollama to pre-load model weights into VRAM."""
+        try:
+            # Check service first
+            self._ensure_service()
+            # Non-blocking check for model existence
+            self._ensure_model_exists()
+            # Send an empty request with -1 keep_alive to lock model in memory
+            payload = {
+                "model": self.model,
+                "prompt": "",
+                "template": "",
+                "stream": False,
+                "keep_alive": -1 # Keep model in memory indefinitely until server stops
+            }
+            requests.post(self.url, json=payload, timeout=5)
+            synaptic_log.info(f"Ollama Warm-up initiated for {self.model}")
+        except Exception as e:
+            synaptic_log.debug(f"Pre-warm failed: {e}")
 
     def _ensure_model_exists(self):
         """Checks if the configured model is pulled, otherwise initiates pull."""
@@ -94,12 +118,13 @@ class OllamaAdapter(AbstractModel):
             "prompt": prompt,
             "system": system_instruction,
             "stream": False,
+            "keep_alive": -1,   # Ensure model remains in VRAM after generation
             "options": {
-                "temperature": 0.1,  # Lower temp = more deterministic, faster logic evaluation
-                "num_predict": 2048, # Cap output allocation so Ollama doesn't lock excess VRAM upfront
+                "temperature": 0.1,  
+                "num_predict": 2048, 
                 "top_p": 0.9,
-                "num_ctx": 8192,     # High context window required to ingest all 10 injected skill playbooks safely
-                "num_thread": 8      # Force parallelization across CPU cores if GPU spills over
+                "num_ctx": 8192,     
+                "num_thread": 8      
             }
         }
         

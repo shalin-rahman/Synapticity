@@ -1,7 +1,28 @@
 {
-    "total_missions": 0,
-    "first_pass_success_rate": 0.0,
+    "total_missions": 1,
+    "first_pass_success_rate": 100.0,
     "average_repairs_per_mission": 0.0,
-    "agent_metrics": {},
-    "mission_history": []
+    "agent_metrics": {
+        "gemma4:latest": {
+            "total": 1,
+            "repairs": 1,
+            "failures": 0
+        }
+    },
+    "mission_history": [
+        {
+            "timestamp": "2026-04-14T11:50:55.394277",
+            "mission_id": "claude-parity-test",
+            "success": true,
+            "repairs": 1,
+            "duration_seconds": 3290.03,
+            "model_used": "gemma4:latest"
+        }
+    ],
+    "inference_metrics": {
+        "Ollama": {
+            "calls": 9,
+            "total_duration": 3988.207463979721
+        }
+    }
 }
