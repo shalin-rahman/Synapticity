@@ -23,8 +23,8 @@ class PlanningPhase:
         self._skills   = skill_registry
         self._logger   = logger
 
-    def run(self, mission_path: str, state: dict, mission_id: str) -> str:
-        """Returns the produced architectural specs string."""
+    async def run(self, mission_path: str, state: dict, mission_id: str, directive: str = None) -> str:
+        """Asynchronously returns the produced architectural specs string."""
         ctx_hash   = generate_context_hash(mission_path)
         cache_file = os.path.join(mission_path, "specs.json")
 
@@ -37,7 +37,12 @@ class PlanningPhase:
                 return data["specs"]
 
         print("[PLAN] Planning the project structure...")
-        specs = self._planner.run(state["objective"], task="Drafting Architectural Specs", mission_id=mission_id)
+        specs = await self._planner.run(
+            state["objective"], 
+            task="Drafting Architectural Specs", 
+            mission_id=mission_id,
+            directive=directive
+        )
 
         # Extract title from leading H1 heading if present
         title_match = re.search(r"^# (.*)", specs)
@@ -61,8 +66,9 @@ class HealingCyclePhase:
         self._runtime = runtime
         self._logger  = logger
 
-    def run(self, mission_path: str, state: dict, specs: str, code: str, mission_id: str) -> str:
-        """Returns the verified (or best-effort) code after up to MAX_RETRY_ATTEMPTS passes."""
+    async def run(self, mission_path: str, state: dict, specs: str, code: str, mission_id: str, directives: dict = None) -> str:
+        """Asynchronously returns the verified (or best-effort) code."""
+        directives = directives or {}
         for i in range(1, settings.MAX_RETRY_ATTEMPTS + 1):
             print(f"[VERIFY] Verification Pass {i}...")
 
@@ -70,13 +76,12 @@ class HealingCyclePhase:
             runtime_log  = f"SUCCESS: {execution['success']}\nSTDOUT: {execution['stdout']}\nSTDERR: {execution['stderr']}"
             quality      = self._runtime.scan_quality(code)
 
-            # Dispatch QA and Security in parallel
-            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-                qa_future  = executor.submit(self._run_qa, specs, runtime_log, quality, code, mission_id, i, state)
-                sec_future = executor.submit(self._run_security, code, mission_id, i, state)
-                
-                qa_result  = qa_future.result()
-                sec_result = sec_future.result()
+            # Dispatch QA and Security in parallel via true asyncio parallelism
+            results = await asyncio.gather(
+                self._run_qa(specs, runtime_log, quality, code, mission_id, i, state, directives.get("qa")),
+                self._run_security(code, mission_id, i, state, directives.get("sec"))
+            )
+            qa_result, sec_result = results
 
             if "VERDICT: SECURE" in sec_result and "VERDICT: PASS" in qa_result and quality["clean"]:
                 print("[OK] Code verified and secure.")
@@ -91,10 +96,11 @@ class HealingCyclePhase:
                 if not quality["clean"] or "VERDICT: NEEDS_FIX" in qa_result
                 else sec_result
             )
-            raw_repair = self._coder.run(
+            raw_repair = await self._coder.run(
                 f"REMEDIATION_DIRECTIVE: {directive}\nORIGINAL_CODE: {code}",
                 task="Applying Expert Remediation",
-                mission_id=mission_id
+                mission_id=mission_id,
+                directive=directives.get("swe")
             )
             code = strip_markdown_backticks(raw_repair)
             self._logger.log(state, "software-engineer", "Applied auto-remediation patch.", code)
@@ -121,24 +127,26 @@ class HealingCyclePhase:
         ))
         return result
 
-    def _run_qa(self, specs, runtime_log, quality, code, mission_id, loop_i, state) -> str:
+    async def _run_qa(self, specs, runtime_log, quality, code, mission_id, loop_i, state, directive=None) -> str:
         print("[QA] Checking logic and structure...")
-        result = self._tester.run(
+        result = await self._tester.run(
             f"Specs: {specs}\nRuntime Logs: {runtime_log}\n"
             f"IDE_PROBLEMS_WINDOW: {quality['problems']}\nCODE_UNDER_TEST:\n{code}",
             task="Verifying Functional & Structural Integrity",
-            mission_id=mission_id
+            mission_id=mission_id,
+            directive=directive
         )
         self._logger.log(state, "tester", f"Verification Loop {loop_i} Analysis", result)
         return result
 
-    def _run_security(self, code, mission_id, loop_i, state) -> str:
+    async def _run_security(self, code, mission_id, loop_i, state, directive=None) -> str:
         print("[SEC] Checking for security vulnerabilities...")
         audit  = self._runtime.scan_security(code)
-        result = self._auditor.run(
+        result = await self._auditor.run(
             f"CODE:\n{code}\nSTATIC_SCAN_REPORT: {audit['summary']}",
             task="Performing Zero-Trust Security Audit",
-            mission_id=mission_id
+            mission_id=mission_id,
+            directive=directive
         )
         self._logger.log(state, "oncall-engineer", f"Security Audit Loop {loop_i}", result)
         return result

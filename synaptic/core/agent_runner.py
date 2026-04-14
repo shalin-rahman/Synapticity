@@ -21,20 +21,23 @@ class AgentRunner:
         self.fallback_model = fallback_model
         self._analytics = PerformanceAnalytics()
 
-    def run(self, prompt: str, context: str = "", task: str = "Processing", mission_id: str = None) -> str:
-        """Processes a prompt through the chosen persona, using optional context."""
+    async def run(self, prompt: str, context: str = "", task: str = "Processing", mission_id: str = None, directive: str = None) -> str:
+        """Asynchronously processes a prompt through the chosen persona, using optional context."""
         path = os.path.join(settings.AGENT_PATH, self.persona_file)
         if not os.path.exists(path):
             raise ConfigurationError(f"Persona file missing: {self.persona_file}")
             
         with open(path, "r", encoding="utf-8") as f:
             system = f.read()
+
+        if directive:
+            system += f"\n\n[USER_CUSTOM_DIRECTIVE]\n{directive}"
             
         final_prompt = f"CONTEXT:\n{context}\n\nTASK:\n{prompt}" if context else prompt
         agent_name   = self.persona_file.split('.')[0].upper()
         
         try:
-            return self._dispatch_with_monitoring(
+            return await self._dispatch_with_monitoring(
                 self.model, system, final_prompt, task, agent_name, mission_id
             )
         except (ModelProviderError, ConfigurationError) as e:
@@ -45,7 +48,7 @@ class AgentRunner:
                 from rich.console import Console
                 Console().print(f"\n[bold yellow][WARN][/] {self._get_model_identity(self.model)} failed. Switching to {fallback_name}...")
                 
-                return self._dispatch_with_monitoring(
+                return await self._dispatch_with_monitoring(
                     self.fallback_model, system, final_prompt, task, agent_name, mission_id, is_fallback=True
                 )
             raise
@@ -54,7 +57,7 @@ class AgentRunner:
     # Private Helpers
     # ------------------------------------------------------------------
 
-    def _dispatch_with_monitoring(self, model_adapter, system, prompt, task, agent_name, mission_id, is_fallback=False) -> str:
+    async def _dispatch_with_monitoring(self, model_adapter, system, prompt, task, agent_name, mission_id, is_fallback=False) -> str:
         """Executes a model call while maintaining a live CLI progress monitor."""
         from rich.console import Console
         console = Console()
@@ -81,7 +84,7 @@ class AgentRunner:
         
         try:
             start_time = time.time()
-            result = model_adapter.generate(system, prompt)
+            result = await model_adapter.generate(system, prompt)
             duration = time.time() - start_time
             
             done_event.set()

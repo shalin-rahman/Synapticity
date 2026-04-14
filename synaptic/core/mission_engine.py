@@ -5,6 +5,7 @@ It delegates state management, logging, and agent communication to specialized s
 import os
 import time
 import json
+import re
 from synaptic.config import settings
 from synaptic.models.gemini import GeminiAdapter
 from synaptic.models.ollama import OllamaAdapter
@@ -51,8 +52,8 @@ class MissionEngine:
     # Public API
     # ------------------------------------------------------------------
 
-    def run(self, mission_id: str, objective: str = None) -> None:
-        """Starts or continues a development task."""
+    async def run(self, mission_id: str, objective: str = None) -> None:
+        """Asynchronously starts or continues a development task."""
         start_time = time.time()
         path = os.path.join(settings.WORKSPACE_PATH, mission_id)
         os.makedirs(path, exist_ok=True)
@@ -62,7 +63,11 @@ class MissionEngine:
         state     = state_mgr.load()
 
         if objective:
-            state["objective"] = objective
+            clean_obj, directives = self._parse_custom_directives(objective)
+            state["objective"] = clean_obj
+            state["directives"] = directives
+
+        directives = state.get("directives", {})
 
         synaptic_log.info(f"Starting work: {mission_id}")
         print(f"[START] Project {mission_id} (Phase: {state.get('phase', 'INITIAL')})")
@@ -71,7 +76,7 @@ class MissionEngine:
             # Phase 1 — Planning
             if not state.get("specs"):
                 planner = PlanningPhase(self.planner, self._skills, self._log)
-                state["specs"] = planner.run(path, state, mission_id)
+                state["specs"] = await planner.run(path, state, mission_id, directive=directives.get("pm"))
                 state["phase"] = "PLANNED"
                 state_mgr.save(state)
                 self._log.persist(path, state)
@@ -80,9 +85,10 @@ class MissionEngine:
             # Phase 2 — Implementation
             if not state.get("code"):
                 context       = self._skills.inject(state["objective"] + " " + state["specs"])
-                raw_code      = self.coder.run(
+                raw_code      = await self.coder.run(
                     state["specs"], context,
-                    task="Synthesizing Source Code", mission_id=mission_id
+                    task="Synthesizing Source Code", mission_id=mission_id,
+                    directive=directives.get("swe")
                 )
                 state["code"] = strip_markdown_backticks(raw_code)
                 self._log.log(state, "software-engineer", "Generated code based on specs.", state["code"])
@@ -94,13 +100,13 @@ class MissionEngine:
             # Phase 3 — Healing & Verification
             if state.get("phase") not in ("VERIFIED", "COMPLETED"):
                 healer        = HealingCyclePhase(self.coder, self.tester, self.auditor, self._runtime, self._log)
-                state["code"] = healer.run(path, state, state["specs"], state["code"], mission_id)
+                state["code"] = await healer.run(path, state, state["specs"], state["code"], mission_id, directives=directives)
                 state["phase"] = "VERIFIED"
                 state_mgr.save(state)
                 self._log.persist(path, state)
 
             if state.get("phase") != "COMPLETED":
-                self._finalize(path, state, mission_id, workspace, state_mgr)
+                await self._finalize(path, state, mission_id, workspace, state_mgr)
 
             self._log_mission_performance(mission_id, state, time.time() - start_time, success=True)
 
@@ -115,8 +121,8 @@ class MissionEngine:
                 f"Project '{mission_id}' stopped at '{state.get('phase', 'START')}': {e}"
             )
 
-    def execute_single_agent(self, mission_id: str, agent_name: str, task: str) -> str:
-        """Dispatches a solo agent to perform an isolated task on an existing mission."""
+    async def execute_single_agent(self, mission_id: str, agent_name: str, task: str) -> str:
+        """Asynchronously dispatches a solo agent to perform an isolated task on an existing mission."""
         path = os.path.join(settings.WORKSPACE_PATH, mission_id)
         if not os.path.exists(path):
             raise WorkflowError(f"Mission '{mission_id}' does not exist. Cannot dispatch agent.")
@@ -129,7 +135,7 @@ class MissionEngine:
         skills    = self._skills.inject(task + " " + context)
 
         print(f"[RUN] Sending {agent_name.upper()} into {mission_id}...")
-        output = runner.run(
+        output = await runner.run(
             f"DIRECTIVE:\n{task}\n\nCONTEXT:\n{context}\n\nSKILLS:\n{skills}",
             task=task, mission_id=mission_id
         )
@@ -145,6 +151,31 @@ class MissionEngine:
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
+
+    def _parse_custom_directives(self, objective: str) -> tuple:
+        """Extracts [ROLE: instruction] tags from the objective string."""
+        directives = {}
+        # Pattern: [ROLE: Instruction]
+        pattern = r"\[([a-zA-Z0-9_\-]+):\s*(.+?)\]"
+        matches = list(re.finditer(pattern, objective))
+        
+        clean_objective = objective
+        for match in matches:
+            role = match.group(1).lower().strip()
+            instruction = match.group(2).strip()
+            
+            # Simple alias mapping to internal role names
+            if role in ("pm", "product"): role = "pm"
+            if role in ("swe", "coder", "dev"): role = "swe"
+            if role in ("qa", "test", "tester"): role = "qa"
+            if role in ("sec", "audit", "security"): role = "sec"
+            if role in ("doc", "writer"): role = "doc"
+            if role in ("devops", "deploy"): role = "devops"
+            
+            directives[role] = instruction
+            clean_objective = clean_objective.replace(match.group(0), "")
+            
+        return clean_objective.strip(), directives
 
     def _resolve_optimal_routing(self) -> tuple:
         """Determines the best primary/fallback pair based on health and history."""
@@ -197,19 +228,19 @@ class MissionEngine:
             model=model_name
         )
 
-    def _finalize(self, path, state, mission_id, workspace: MissionWorkspace, state_mgr: MissionStateManager) -> None:
+    async def _finalize(self, path, state, mission_id, workspace: MissionWorkspace, state_mgr: MissionStateManager) -> None:
         """Runs documentation, CI/CD synthesis, and workspace commit."""
         synaptic_log.info(f"MISSION FINALIZING: {mission_id}")
 
         print("[DOCS] Writing technical documentation...")
-        docs = self.writer.run(
+        docs = await self.writer.run(
             f"Objective: {state['objective']}\nSpecs: {state['specs']}\nFinal Code: {state['code']}",
             task="Drafting Technical Hand-off", mission_id=mission_id
         )
         self._log.log(state, "writer", "Generated technical hand-off documentation.", docs)
 
         print("[CI] Generating the CI/CD pipeline...")
-        pipeline = self.devops.run(
+        pipeline = await self.devops.run(
             f"Objective: {state['objective']}\nRepository Tech Stack Code:\n{state['code']}",
             task="Architecting GitHub Actions Pipeline", mission_id=mission_id
         )
