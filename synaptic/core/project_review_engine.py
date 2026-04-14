@@ -23,9 +23,9 @@ class ProjectReviewEngine:
         self._engine = MissionEngine()
         self._logger = MissionLogger()
 
-    def review(self, project_path: str, goal: str, mission_id: str, apply_changes: bool = False) -> str:
+    async def review(self, project_path: str, goal: str, mission_id: str, apply_changes: bool = False) -> str:
         """
-        Runs a structured code review of the project at `project_path`.
+        Asynchronously runs a structured code review of the project at `project_path`.
         Returns the review report string.
         If `apply_changes` is True, attempts to write suggested file patches back to disk.
         """
@@ -37,21 +37,21 @@ class ProjectReviewEngine:
         print(f"[REVIEW] {len(files)} files indexed. Dispatching agent team...")
 
         # --- Review Pass: Product Manager assesses the architecture ---
-        arch_review = self._engine.planner.execute(
+        arch_review = await self._engine.planner.run(
             f"REVIEW GOAL: {goal}\n\nPROJECT CONTEXT:\n{context}",
             task="Performing Architecture & Quality Review",
             mission_id=mission_id
         )
 
         # --- Improvement Pass: SWE proposes concrete code changes ---
-        improvement = self._engine.coder.execute(
+        improvement = await self._engine.coder.run(
             f"REVIEW GOAL: {goal}\n\nARCHITECTURE REVIEW:\n{arch_review}\n\nPROJECT CONTEXT:\n{context}",
             task="Proposing Concrete Code Improvements",
             mission_id=mission_id
         )
 
         # --- Security Pass ---
-        sec_review = self._engine.auditor.execute(
+        sec_review = await self._engine.auditor.run(
             f"REVIEW GOAL: {goal}\n\nPROJECT CONTEXT:\n{context}",
             task="Security & Vulnerability Assessment",
             mission_id=mission_id

@@ -31,8 +31,9 @@ def handle_review() -> None:
         console.print("[yellow][PATCH] Modification mode enabled — agent patches will be written to disk.[/]")
 
     from synaptic.core.project_review_engine import ProjectReviewEngine
+    import asyncio
     engine = ProjectReviewEngine()
-    report = engine.review(project_path, goal, mission_id, apply_changes=apply_flag)
+    report = asyncio.run(engine.review(project_path, goal, mission_id, apply_changes=apply_flag))
 
     console.print("\n")
     console.print(Markdown(report))

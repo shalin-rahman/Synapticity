@@ -30,8 +30,8 @@ class ReflectionEngine:
         self.lesson_dir = os.path.join(settings.SKILL_PATH, "autonomous-lessons")
         self.lesson_path = os.path.join(self.lesson_dir, "skill.md")
 
-    def analyze(self, mission_id: str) -> str:
-        """Reads logs for a mission, identifies key lessons, and updates the shared knowledge base."""
+    async def analyze(self, mission_id: str) -> str:
+        """Asynchronously reads logs for a mission, identifies key lessons, and updates the shared knowledge base."""
         os.makedirs(self.lesson_dir, exist_ok=True)
         log_file = os.path.join(settings.WORKSPACE_PATH, mission_id, "MISSION_LOG.md")
         
@@ -44,7 +44,7 @@ class ReflectionEngine:
         print(f"[REVIEW] Reviewing project history: {mission_id}...")
         
         # Ask Reflector to synthesize lessons from the audit trail
-        lessons = self.reflector.run(
+        lessons = await self.reflector.run(
             f"PROJECT_AUDIT_TRAIL:\n{audit_trail}",
             task="Analyzing Improvements",
             mission_id=mission_id

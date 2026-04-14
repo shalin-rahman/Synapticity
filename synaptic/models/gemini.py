@@ -1,8 +1,12 @@
+"""
+Gemini Model Adapter (Async Version)
+Handles high-level strategy and security auditing via Google Gemini API.
+"""
+
 import json
 import os
-import time
+import asyncio
 from google import genai
-from google.api_core import exceptions
 from .base import AbstractModel
 from synaptic.config import settings
 from synaptic.utils.exceptions import ConfigurationError, ModelProviderError
@@ -10,8 +14,9 @@ from synaptic.utils.logger import synaptic_log
 
 class GeminiAdapter(AbstractModel):
     """
-    synaptic Adapter for Google Gemini.
-    Handles high-level strategy and security auditing.
+    Synaptic Adapter for Google Gemini.
+    Features automated multi-key rotation and rate-limit management.
+    Now fully asynchronous for high-performance mission orchestration.
     """
     
     def __init__(self):
@@ -31,68 +36,42 @@ class GeminiAdapter(AbstractModel):
     def _init_client(self):
         if not self.keys:
             return None
-        try:
-            return genai.Client(api_key=self.keys[self.index])
-        except Exception as e:
-            synaptic_log.error(f"Gemini Client Initialization Failed: {e}")
-            return None
+        return genai.Client(api_key=self.keys[self.index])
 
     def rotate(self):
-        """Swaps to the next key in the pool to circumvent rate limits."""
+        """Swaps to the next key in the pool (Synchronous state update)."""
         if not self.keys: return
         self.index = (self.index + 1) % len(self.keys)
         with open(settings.TRACKER_FILE, "w") as f:
             json.dump({"index": self.index}, f)
         self.client = genai.Client(api_key=self.keys[self.index])
-        synaptic_log.warning(f"Rotating Gemini API Key to account index: {self.index}")
-        print(f"[ROTATION] Synaptic Rotation: Active Account {self.index + 1}")
+        synaptic_log.warning(f"Rotating Gemini API Key index: {self.index}")
 
-    def generate(self, system_instruction: str, prompt: str) -> str:
-        """
-        Generates content from Gemini with built-in RPM management and rotation.
-        """
+    async def generate(self, system_instruction: str, prompt: str) -> str:
+        """Asynchronous generation with built-in rate-limit back-off."""
         if not self.client:
-            raise ConfigurationError(
-                "Gemini API keys are missing in your .env file. "
-                "Please add GEMINI_KEY_1 through GEMINI_KEY_5."
-            )
+            raise ConfigurationError("Gemini API keys missing.")
 
         while True:
             try:
-                # Enforce configured sleep buffer to respect 15 RPM limits
-                time.sleep(settings.SLEEP_BUFFER)
+                # Respect rate limits via non-blocking sleep
+                await asyncio.sleep(settings.SLEEP_BUFFER)
                 
-                response = self.client.models.generate_content(
+                # Use the asynchronous entry point from the SDK
+                response = await self.client.aio.models.generate_content(
                     model=settings.GEMINI_MODEL,
                     contents=f"{system_instruction}\n\nTask: {prompt}"
                 )
-                self._update_log()
                 return response.text
                 
             except Exception as e:
                 err_str = str(e).upper()
                 if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                    synaptic_log.warning(f"Synaptic Quota Hit: {e}. Rotating keys and retrying...")
+                    synaptic_log.warning(f"Quota Hit. Rotating...")
                     self.rotate()
-                    # If we only have one key, we MUST wait for the quota window to reset
                     if len(self.keys) <= 1:
-                        print("[WAIT] Only one Gemini key detected. Sleeping 20s to bypass rate limit...")
-                        time.sleep(20)
+                        await asyncio.sleep(20) # Back-off for single key
                     continue
-
-                # Log the raw error but provide a clean message to the runner
-                synaptic_log.error(f"Gemini API Raw Error: {e}")
                 
-                msg = "Quota Exceeded (429)" if "429" in str(e) else f"API Error ({type(e).__name__})"
-                raise ModelProviderError(f"Gemini failed: {msg}")
-
-    def _update_log(self):
-        log_file = settings.USAGE_LOG_FILE
-        today = time.strftime("%Y-%m-%d")
-        data = {}
-        if os.path.exists(log_file):
-            try:
-                with open(log_file, "r") as f: data = json.load(f)
-            except: pass
-        data[today] = data.get(today, 0) + 1
-        with open(log_file, "w") as f: json.dump(data, f)
+                synaptic_log.error(f"Gemini API Error: {e}")
+                raise ModelProviderError(f"Gemini failed: {e}")

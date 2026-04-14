@@ -1,4 +1,9 @@
-import requests
+"""
+Claude Model Adapter (Async Version)
+High-precision reasoning driver for Anthropic's Claude models.
+"""
+
+import httpx
 import json
 from synaptic.config import settings
 from synaptic.models.base import AbstractModel
@@ -6,8 +11,8 @@ from synaptic.utils.exceptions import ModelProviderError
 
 class ClaudeAdapter(AbstractModel):
     """
-    Adapter for Anthropic's Claude models.
-    Directly handles API requests via the 'requests' library to keep dependencies minimal.
+    Synaptic Adapter for Anthropic Claude.
+    Optimized for high-density asynchronous I/O via httpx.
     """
 
     def __init__(self):
@@ -15,15 +20,10 @@ class ClaudeAdapter(AbstractModel):
         self.model = settings.CLAUDE_MODEL
         self.url = "https://api.anthropic.com/v1/messages"
 
+    async def generate(self, system_instruction: str, prompt: str) -> str:
+        """Asynchronously sends a request to Claude and returns the text response."""
         if not self.api_key:
-            # Fallback check for common env naming
-            import os
-            self.api_key = os.getenv("CLAUDE_API_KEY", "")
-
-    def generate(self, system_instruction: str, prompt: str) -> str:
-        """Sends a request to Claude and returns the text response."""
-        if not self.api_key:
-            raise ModelProviderError("Claude API Key is missing. Set ANTHROPIC_API_KEY in your .env file.")
+            raise ModelProviderError("Claude API Key is missing. Set ANTHROPIC_API_KEY.")
 
         headers = {
             "x-api-key": self.api_key,
@@ -34,26 +34,20 @@ class ClaudeAdapter(AbstractModel):
         data = {
             "model": self.model,
             "system": system_instruction,
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
+            "messages": [{"role": "user", "content": prompt}],
             "max_tokens": 4096,
             "temperature": 0.5
         }
 
-        try:
-            response = requests.post(self.url, headers=headers, data=json.dumps(data))
-            response.raise_for_status()
-            
-            payload = response.json()
-            # Extract content from Claude's response format: content[0].text
-            if "content" in payload and len(payload["content"]) > 0:
-                return payload["content"][0]["text"]
-            
-            raise ModelProviderError(f"Unexpected Claude API response format: {payload}")
-
-        except requests.exceptions.HTTPError as he:
-            error_data = response.json() if response.text else "No error details available."
-            raise ModelProviderError(f"Claude API HTTP Error: {he} | Details: {error_data}")
-        except Exception as e:
-            raise ModelProviderError(f"Failed to reach Claude API: {e}")
+        async with httpx.AsyncClient(timeout=600.0) as client:
+            try:
+                response = await client.post(self.url, headers=headers, json=data)
+                response.raise_for_status()
+                
+                payload = response.json()
+                if "content" in payload and len(payload["content"]) > 0:
+                    return payload["content"][0]["text"]
+                
+                raise ModelProviderError(f"Unexpected Claude format: {payload}")
+            except Exception as e:
+                raise ModelProviderError(f"Claude Connection Failed: {e}")
