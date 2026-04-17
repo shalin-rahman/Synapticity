@@ -8,39 +8,39 @@ Welcome to the definitive breakdown of the Synapticity framework! We've document
 
 ```mermaid
 flowchart TD
-    subgraph CLI
+    subgraph CLI ["CLI Hub"]
         Main["main.py"]
         Registry["Command Registry"]
         Handlers["Command Handlers"]
     end
 
-    subgraph CORE
+    subgraph CORE ["Orchestration Engine"]
         Engine["MissionEngine"]
         Review["ProjectReviewEngine"]
         SelfLearn["ReflectionEngine"]
         Phases["Mission Phases"]
     end
 
-    subgraph AGENT
+    subgraph AGENT ["Agent Management"]
         Dispatcher["Agent Dispatcher"]
         Runner["AgentRunner"]
     end
 
-    subgraph STATE
+    subgraph STATE ["State & Sandbox"]
         Workspace["MissionWorkspace"]
         StateMgr["MissionStateManager"]
         Runtime["RuntimeRunner"]
         Skills["SkillRegistry"]
     end
 
-    subgraph MODELS
+    subgraph MODELS ["Intelligence Adapters"]
         Base["AbstractModel"]
         Ollama["OllamaAdapter"]
         Gemini["GeminiAdapter"]
         Claude["ClaudeAdapter"]
     end
 
-    subgraph UTILS
+    subgraph UTILS ["System Utilities"]
         Deployer["GitDeployer"]
         Indexer["ProjectIndexer"]
         Logger["MemoryLogger"]
@@ -96,25 +96,26 @@ flowchart TD
 At its core, Synapticity is driven by a state-machine. It moves through five distinct phases to get things done, and it won't move forward until the code passes some strict verification gates.
 
 ### Workflow A: The Standard Mission (launch or resume)
-1.  **Bootstrap**: First, `main.py` grabs your environment settings from `config.py` and figures out which command you want to run by checking `registry.py`.
-2.  **Initialization**: Then, the `MissionStateManager` either loads up your existing progress or creates a new `state.json` file. Meanwhile, our `OllamaAdapter` starts waking up local models in the background so there's no waiting around later.
-3.  **Phase 1 - Planning**: 
-    - The `MissionEngine` calls in the **Product Manager** agent.
-    - Our `SkillRegistry.inject()` function quickly scans your goal for keywords (like "fastapi") and hands the agent the right technical playbooks.
-    - We end up with a structurally sound `specs.json` file that acts as our architectural blueprint.
-4.  **Phase 2 - Development**:
-    - The **Software Engineer** agent takes that blueprint and starts writing the actual source code.
-    - Once finished, `MissionWorkspace.commit_code()` safely saves it all straight into your mission folder.
-5.  **Phase 3 - The Healing Cycle (Parallel QA)**:
-    - This is the cool part. `RuntimeRunner` executes the new code in a secure sandbox.
-    - At the exact same time, the `MissionEngine` asks both the **QA** and **Security Auditor** agents to review the results using `concurrent.futures`.
-    - If they catch a bug, the **Software Engineer** gets pinged to apply a fix. This loops until everyone agrees the code is perfect.
-6.  **Phase 4 - Wrap Up**:
-    - The **Technical Writer** drafts up your markdown documentation.
-    - The **DevOps Engineer** writes the GitHub Action YAML files for your pipelines.
-    - Finally, `GitDeployer` pushes everything up to your remote repository if you asked it to.
-7.  **Phase 5 - Looking Back**:
-    - Right before shutting down, the `ReflectionEngine` reviews the entire mission log to see what it can learn, saving new skills for next time!
+
+1. **Bootstrap**: First, `main.py` grabs your environment settings from `config.py` and figures out which command you want to run by checking `registry.py`.
+2. **Initialization**: Then, the `MissionStateManager` either loads up your existing progress or creates a new `state.json` file. Meanwhile, our `OllamaAdapter` starts waking up local models in the background so there's no waiting around later.
+3. **Phase 1 - Planning**:
+   - The `MissionEngine` calls in the **Product Manager** agent.
+   - Our `SkillRegistry.inject()` function quickly scans your goal for keywords (like "fastapi") and hands the agent the right technical playbooks.
+   - We end up with a structurally sound `specs.json` file that acts as our architectural blueprint.
+4. **Phase 2 - Development**:
+   - The **Software Engineer** agent takes that blueprint and starts writing the actual source code.
+   - Once finished, `MissionWorkspace.commit_code()` safely saves it all straight into your mission folder.
+5. **Phase 3 - The Healing Cycle (Parallel QA)**:
+   - This is the cool part. `RuntimeRunner` executes the new code in a secure sandbox.
+   - At the exact same time, the `MissionEngine` asks both the **QA** and **Security Auditor** agents to review the results using `concurrent.futures`.
+   - If they catch a bug, the **Software Engineer** gets pinged to apply a fix. This loops until everyone agrees the code is perfect.
+6. **Phase 4 - Wrap Up**:
+   - The **Technical Writer** drafts up your markdown documentation.
+   - The **DevOps Engineer** writes the GitHub Action YAML files for your pipelines.
+   - Finally, `GitDeployer` pushes everything up to your remote repository if you asked it to.
+7. **Phase 5 - Looking Back**:
+   - Right before shutting down, the `ReflectionEngine` reviews the entire mission log to see what it can learn, saving new skills for next time!
 
 ---
 
@@ -138,13 +139,11 @@ flowchart TD
     Input --> StateNode
     Input --> PlaybookNode
     PlaybookNode --> PromptNode
-    
     PromptNode --> SpecsNode
     SpecsNode --> CodeNode
-    
+
     CodeNode --> ResultNode
     ResultNode --> CodeNode
-    
     ResultNode --> VerifiedNode
     VerifiedNode --> DeployNode
     VerifiedNode --> ReflectionNode
@@ -165,14 +164,14 @@ The following traces the **exact Python variables and method calls** as they flo
 
 ```mermaid
 flowchart TD
-    subgraph BOOT [Engine Bootstrap]
+    subgraph BOOT ["Engine Bootstrap"]
         R1["_resolve_optimal_routing()"]
         R2["OllamaAdapter / GeminiAdapter / ClaudeAdapter"]
         R3["PerformanceAnalytics checks stats_file"]
         R4["6x AgentRunner created with primary + fallback"]
     end
 
-    subgraph PLAN [Phase 1 - Planning]
+    subgraph PLAN ["Phase 1 - Planning"]
         P1["MissionStateManager.load() returns state dict"]
         P2["_parse_custom_directives returns clean_obj + directives"]
         P3["PlanningPhase.run()"]
@@ -196,6 +195,7 @@ flowchart TD
     P6 --> P7
     P7 --> P8
     P8 --> P3
+```
 ```
 
 #### Stage B: Development and Healing Cycle
@@ -348,21 +348,21 @@ Here's the breakdown of the heavy lifters making all the magic happen in the bac
 
 ## 3. The Brains: AI Intelligence (`synaptic/models/`)
 
-| File & Class | How it thinks |
-| :--- | :--- |
-| `AbstractModel` | The basic contract that says "If you want to be an AI brain here, you must be able to `generate()` text." |
-| `OllamaAdapter` | Our **Zero-Latency local driver**. It keeps models infinitely loaded in the background using a `-1 keep_alive` trick so they answer instantly. |
-| `GeminiAdapter` | Our **Cloud fallback**. It automatically rotates through API keys to keep you from hitting rate limits. |
-| `ClaudeAdapter` | The **Heavy hitter**. When we really need to figure out complex architectural problems, we default to Claude's Sonnet or Opus brains. |
+| File & Class      | How it thinks                                                                                                                                         |
+| :---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AbstractModel` | The basic contract that says "If you want to be an AI brain here, you must be able to `generate()` text."                                           |
+| `OllamaAdapter` | Our**Zero-Latency local driver**. It keeps models infinitely loaded in the background using a `-1 keep_alive` trick so they answer instantly. |
+| `GeminiAdapter` | Our**Cloud fallback**. It automatically rotates through API keys to keep you from hitting rate limits.                                          |
+| `ClaudeAdapter` | The**Heavy hitter**. When we really need to figure out complex architectural problems, we default to Claude's Sonnet or Opus brains.            |
 
 ---
 
 ## 4. Helpful Utilities (`synaptic/utils/`)
 
-| Utility | What it helps with |
-| :--- | :--- |
-| `SynapticDoctor` | If you run `run_full_service()`, it checks your keys, models, and connections, and even auto-fixes things using `heal()`. |
-| `GitDeployer` | Makes sharing code a breeze. `deploy(path, mission_id)` physically initializes a repo and forces it straight into GitHub. |
+| Utility            | What it helps with                                                                                                                                                        |
+| :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `SynapticDoctor` | If you run `run_full_service()`, it checks your keys, models, and connections, and even auto-fixes things using `heal()`.                                             |
+| `GitDeployer`    | Makes sharing code a breeze.`deploy(path, mission_id)` physically initializes a repo and forces it straight into GitHub.                                                |
 | `ProjectIndexer` | The `build_context()` scanner can recursively unpack your entire local application folder into a single readable string so an AI can read your entire codebase at once. |
 | `MemoryLogger` | Uses `log_interaction()` to quietly append JSON lines in the background. It remembers everything said during a mission. |
 | `SensoryCortex` | The "Eyes". Uses Firecrawl to fetch real-time documentation and bridge the knowledge gap for recently released libraries. |
@@ -372,18 +372,19 @@ Here's the breakdown of the heavy lifters making all the magic happen in the bac
 
 ## 5. The Command Hub (`synaptic/cli/`)
 
-| Area | Purpose |
-| :--- | :--- |
-| `registry.py` | This acts as the map tying down exactly what Python function should be called when you type a CLI command. |
-| `ui.py` | This makes the CLI look pretty. It renders those awesome live dashboard tables and help menus. |
-| `handlers/` | We keep the actual action scripts (like `handle_launch` or `handle_learn`) separated here so the CLI layer stays lightweight. |
+| Area            | Purpose                                                                                                                           |
+| :-------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `registry.py` | This acts as the map tying down exactly what Python function should be called when you type a CLI command.                        |
+| `ui.py`       | This makes the CLI look pretty. It renders those awesome live dashboard tables and help menus.                                    |
+| `handlers/`   | We keep the actual action scripts (like `handle_launch` or `handle_learn`) separated here so the CLI layer stays lightweight. |
 
 ---
 
 ## 6. Keeping Things Safe & Fast
 
 We put a lot of work into making sure this framework doesn't just work, but works *well*:
-1.  **Speed**: We preload the models into VRAM and run QA and Security tests at the exact same time to eliminate wait times.
-2.  **Safety**: We sandbox the code and run Bandit vulnerability checks so generated scripts don't mess up your computer.
-3.  **Persistence**: `state.json` means you will never lose progress on a mission, even if your computer crashes.
-4.  **Resilience**: If your local AI gets overloaded, it effortlessly fails over to Gemini cloud routing so the mission never stops.
+
+1. **Speed**: We preload the models into VRAM and run QA and Security tests at the exact same time to eliminate wait times.
+2. **Safety**: We sandbox the code and run Bandit vulnerability checks so generated scripts don't mess up your computer.
+3. **Persistence**: `state.json` means you will never lose progress on a mission, even if your computer crashes.
+4. **Resilience**: If your local AI gets overloaded, it effortlessly fails over to Gemini cloud routing so the mission never stops.

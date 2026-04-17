@@ -3,7 +3,7 @@ from synaptic.config import settings
 
 def test_config_version():
     """Verify system versioning."""
-    assert settings.VERSION == "2.0.0"
+    assert settings.VERSION == "3.3.0"
 
 def test_key_sanitization():
     """Ensure placeholder keys are filtered out."""

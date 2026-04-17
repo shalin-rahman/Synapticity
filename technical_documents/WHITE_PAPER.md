@@ -22,25 +22,24 @@ The framework operates on a state-machine orchestrator that strictly enforces a 
 
 ```mermaid
 graph TD
-    User["Mission Objective"] --> PM[Product Manager]
-    PM --> SWE[Software Engineer]
+    User["Mission Objective"] --> PM["Product Manager"]
+    PM --> SWE["Software Engineer"]
 
-    subgraph HEAL [Healing Cycle - Parallel Verification]
-        SWE --> Runner[Runtime Sandbox]
-        Runner --> QA[Tester Agent]
-        Runner --> Sec[Security Auditor]
-        
-        QA --> SWE
-        Sec --> SWE
+    subgraph HEAL ["Healing Cycle"]
+        SWE --> Runner["Runtime Sandbox"]
+        Runner --> QA["Tester Agent"]
+        Runner --> SEC["Security Auditor"]
+        QA -->|Verify| SWE
+        SEC -->|Audit| SWE
     end
-    
-    QA --> Writer[Documentation]
-    Sec --> Writer
-    Writer --> DevOps[DevOps Engineer]
-    DevOps --> Git[GitHub Deployment]
-    
-    Git --> Reflector[Reflection Engine]
-    Reflector --> Skills[Shared Knowledge Base]
+
+    QA --> Writer["Documentation"]
+    SEC --> Writer
+    Writer --> DevOps["DevOps Engineer"]
+    DevOps --> Git["GitHub Deployment"]
+
+    Git --> Reflector["Reflection Engine"]
+    Reflector --> Skills["Shared Knowledge Base"]
 ```
 
 ### Method-Level Execution Breakdown
@@ -56,42 +55,42 @@ sequenceDiagram
     participant HCP as HealingCyclePhase
     participant RR as RuntimeRunner
 
-    CLI->>ME: run(mission_id, objective)
+    CLI->>ME: run mission_id, objective
     activate ME
-    
-    ME->>PP: run(path, state, mission_id)
+
+    ME->>PP: run path, state, mission_id
     activate PP
-    PP->>SR: inject(objective_text)
+    PP->>SR: inject objective_text
     SR-->>PP: Playbook Markdown
-    PP->>AR: run() Product Manager
+    PP->>AR: run Product Manager
     activate AR
-    AR->>LLM: generate(prompt)
+    AR->>LLM: generate prompt
     LLM-->>AR: Raw String
     AR-->>PP: Blueprint Specs
     deactivate AR
     PP-->>ME: state.json PLANNED
     deactivate PP
 
-    ME->>HCP: run(path, state, specs, code)
+    ME->>HCP: run path, state, specs, code
     activate HCP
     loop Verification Cycle
-        HCP->>RR: execute(script_content)
+        HCP->>RR: execute script_content
         RR-->>HCP: stdout, success, stderr
-        HCP->>AR: run() QA and Security
+        HCP->>AR: run QA and Security
     end
     HCP-->>ME: Verified Source Code
     deactivate HCP
-    
+
     opt External Review Path
-        CLI->>ME: ProjectReviewEngine.review()
-        ME->>ME: ProjectIndexer.build_context()
+        CLI->>ME: ProjectReviewEngine.review
+        ME->>ME: ProjectIndexer.build_context
     end
 
     opt Post-Mission
-        ME->>ME: GitDeployer.deploy()
-        ME->>ME: ReflectionEngine.analyze()
+        ME->>ME: GitDeployer.deploy
+        ME->>ME: ReflectionEngine.analyze
     end
-    
+
     ME-->>CLI: Exit
     deactivate ME
 ```

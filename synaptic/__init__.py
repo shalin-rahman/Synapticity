@@ -1,8 +1,9 @@
 import asyncio
+from .config import settings
 from .core.mission_engine import MissionEngine
 from .core.self_learning import ReflectionEngine
 
-__version__ = "3.2.0"
+__version__ = settings.VERSION
 
 def launch(mission_id: str, objective: str):
     """Starts a new development project with a defined objective."""
