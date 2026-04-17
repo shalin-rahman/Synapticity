@@ -1,4 +1,4 @@
-# Synapticity Framework (v3.1)
+# Synapticity Framework (v3.3)
 
 Synapticity is an autonomous software development platform engineered for precision-grade project synthesis. It operates as a digital "Smart Factory," coordinating a specialized hierarchy of AI agents to manage the entire lifecycle—from high-level planning and secure implementation to autonomous CI/CD deployment.
 
@@ -8,15 +8,16 @@ By combining low-latency local processing (via Ollama) with a high-capacity clou
 
 ## Core Philosophy: The Smart Factory
 
-Instead of functioning like a generic chat assistant, Synapticity follows a structured, verified engineering workflow based on industry best practices:
-
 ### 1. Verification-First Culture
 We prioritize quality through a strict "Verification Gate." A code artifact isn't considered complete until it passes both functional testing and security checks. If it finds a defect, the system automatically runs a Healing Cycle to apply patches without needing you to step in.
 
 ### 2. Smart Thinking Playbooks
 Unlike basic LLM wrappers, Synapticity injects specialized **Engineering Playbooks** (Skills) directly into the agents' context. These playbooks provide world-class standards for SOLID design, OWASP security, and Agile product management.
 
-### 3. Warp-Speed Local Intelligence
+### 3. Sensory Intelligence & 2026 Ready
+Equipped with a **Sensory Cortex** (Firecrawl), Synapticity can fetch real-time documentation for post-training libraries (like React 19 or recent architecture updates), overcoming the knowledge cutoff of standard LLMs.
+
+### 4. Warp-Speed Local Intelligence
 Optimized for the "Free-Forever" setup, the framework includes hardware-level optimizations for Ollama, including non-blocking model pre-warming and infinite VRAM residency, delivering a "Claude-like" experience at zero cost.
 
 ### 4. Surgical Custom Directives

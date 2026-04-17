@@ -192,8 +192,31 @@
  
  ---
  
- ## [PENDING] Future Backlog
--- [ ] Unit test suite: mock-based tests for each `MissionEngine` sub-system independently
--- [ ] Web UI dashboard: `rich` + `textual` TUI or lightweight Flask/FastAPI status page
--- [ ] Plugin system: drop any `synaptic/plugins/<name>.py` and auto-discover at startup
--- [ ] Voice-to-Mission: Desktop integration for mission launching via hardware triggers
+ ## Phase 22: Sensory Intelligence & Advanced Metabolic Scaling (v3.3)
+ -- [ ] Implement **Metabolic Manager**: Advanced 5-key pool logic with 429-aware "Seamless Synaptic Handoff"
+ -- [ ] Implement **Sensory Cortex** (Firecrawl): Live research module to fetch post-training documentation (e.g., React 19, SiliconFlow)
+ -- [ ] Integrate **Langfuse Trace**: Multi-agent interaction observability, latency heatmaps, and confidence-score auditing
+ 
+ ## Phase 23: High-Performance Engine (Agno & Motor Cortex)
+ -- [ ] Refactor **Agent Initialization** (Agno): Transition to Agno (Phidata) execution engine for 2μs micro-agent boot-up
+ -- [ ] Optimize **Motor Cortex** for local high-density reasoning (Gemma-4-31B/Qwen3-30B)
+ 
+ ## Phase 24: Deep Memory Persistence (The Hippocampus)
+ -- [ ] Implement **Hippocampus Controller** (Logseq/Obsidian): Graph-based Long-Term Potentiation (#Synapticity_LTP)
+ -- [ ] Architect **Synaptic Buffer**: Formalized 256K-token "Working Set" for high-speed task context retrieval
+ 
+ ## Phase 25: Offline Consolidation & Self-Learning (Dream State)
+ -- [ ] Implement **Local Fine-Tuning Pipeline** (Unsloth): QLoRA-based weight adjustment using failed mission data
+ -- [ ] Implement **Dream State Engine**: Idle-time autonomous simulations to re-solve failed missions internally
+ -- [ ] Implement **Synaptic Weight System**: Dynamic agent routing based on success-driven weight probability
+ -- [ ] Implement **Emotional Feedback Loop** (RLHF): Capture human reward/penalty signals for offline model guidance
+ -- [ ] Implement **Pruning Mechanism**: Systematic removal of inefficient neural pathways based on failure analysis
+ 
+ ---
+  
+  ## [PENDING] Future Backlog
+ -- [ ] Unit test suite: mock-based tests for each `MissionEngine` sub-system independently
+ -- [ ] Web UI dashboard: `rich` + `textual` TUI or lightweight Flask/FastAPI status page
+ -- [ ] Plugin system: drop any `synaptic/plugins/<name>.py` and auto-discover at startup
+ -- [ ] Voice-to-Mission: Desktop integration for mission launching via hardware triggers
+

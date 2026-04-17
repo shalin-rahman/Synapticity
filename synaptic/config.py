@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     """
     
     # --- synaptic Core Identity ---
-    VERSION: str = "3.0.0"
+    VERSION: str = "3.3.0"  # Incremented for Sensory Intelligence & Metabolic Scaling
     
     # --- Gemini API Configuration ---
     GEMINI_ACTIVE: bool = False
@@ -61,6 +61,24 @@ class Settings(BaseSettings):
     USAGE_LOG_FILE: str = "usage_log.json"
     STATE_FILE: str = "mission_state.json"
     LOG_LEVEL: str = "INFO"
+    
+    # --- Phase 22: Sensory & Observability ---
+    FIRECRAWL_API_KEY: str = os.getenv("FIRECRAWL_API_KEY", "")
+    LANGFUSE_PUBLIC_KEY: str = os.getenv("LANGFUSE_PUBLIC_KEY", "")
+    LANGFUSE_SECRET_KEY: str = os.getenv("LANGFUSE_SECRET_KEY", "")
+    LANGFUSE_HOST: str = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
+    
+    # --- Phase 23: High-Performance Engine ---
+    USE_AGNO_ORCHESTRATOR: bool = False # Toggle for Agno micro-agent initialization
+    
+    # --- Phase 24: Deep Memory Persistence (Hippocampus) ---
+    LOGSEQ_GRAPH_PATH: str = os.getenv("LOGSEQ_GRAPH_PATH", "")
+    SYNAPTIC_BUFFER_SIZE: int = 256000 # 256K context limit
+    
+    # --- Phase 25: Offline Consolidation ---
+    ENABLE_DREAM_STATE: bool = False
+    OFFLINE_LEARNING_THRESHOLD: float = 0.20 # 20% failure rate triggers local fine-tune
+    UNSLOTH_VRAM_TARGET: int = 24 # Targeted at 24GB GPUs
 
     @property
     def ANTHROPIC_API_KEY(self) -> str:

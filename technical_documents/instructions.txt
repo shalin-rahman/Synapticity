@@ -1,0 +1,191 @@
+## 1. Metabolic Scaling: The 5-Account Rotator
+Purpose: To provide a continuous "Energy Supply" (tokens) for high-intensity cognitive tasks without hitting Free Tier limits.
+
+for Synapticity Orchestrator:
+
+[ROLE: METABOLIC_MANAGER]
+[CONTEXT: SYNAPTICITY_CORE]
+"Analyze the current Provider class in the dev branch. Implement a Key-Pool Strategy that manages five distinct GEMINI_API_KEYS. Your logic must monitor for 429 ResourceExhausted errors. Upon detection, perform a Seamless Synaptic Handoff: rotate to the next key in the pool, re-initialize the session state, and retry the last failed inference. Ensure that the 'Node' (Agent) remains unaware of the handoff to prevent state fragmentation."
+
+## 2. Local Reflex & Reasoning: Gemma 4 (31B Dense)
+Purpose: To handle "Short-Term Reflex" (coding, testing) locally, saving cloud tokens for "High-Level Planning."
+
+for Software Engineer Neuron:
+
+[MODEL: GEMMA-4-31B]
+[MODE: AGENTIC_THINKING]
+"You are the primary Motor Cortex for Synapticity. You have 256K of context window. Load the entire src/ directory from the dev branch. Your task is to implement the new SynapseDecorator. Use your native Reasoning Mode to analyze the dependency graph first. Output your logic in <thought> tags, then provide the final Python implementation. Strictly adhere to the PydanticAI type-safety standards for all return objects."
+
+## 3. Sensory Input: Firecrawl (Live Research)
+Purpose: To give your agents "Eyes" to read the latest 2026 documentation and avoid "Parametric Amnesia" (outdated training data).
+
+for PM/Researcher Neuron:
+
+[TOOL: FIRECRAWL_AGENT]
+"The user wants to implement a new feature using the 'SiliconFlow A3B' architecture. This library was released post-training. Use the Firecrawl /extract endpoint to crawl the official GitHub documentation. Convert the documentation into Synapticity-Ready Markdown. Identify the core classes, required environment variables, and typical failure modes. Inject this 'New Knowledge' into the Software Engineer's context for the next build cycle."
+
+## 4. Synaptic Mapping: Langfuse (Observability)
+Purpose: To provide a "Functional MRI" of your agentic flows, identifying where logic "misfires."
+
+for System Auditor:
+
+[INTEGRATION: LANGFUSE_TRACE]
+"Wrap all synaptic firings (API calls) with Langfuse Tracing. For every multi-agent interaction, record the latency, token_cost, and synaptic_weight_delta. If an agent’s confidence_score drops below 0.7, trigger an Audit Trace. Generate a visual heatmap of the logic flow to identify which 'Neuron' is responsible for the hallucination and suggest a 'Pruning' (instruction refinement) strategy."
+
+## 5. High-Speed Orchestration: Agno (formerly Phidata)
+Purpose: To reduce "Synaptic Latency." Agno boots agents in 2μs, which is essential for real-time responsiveness in Synapticity.
+
+for Framework Refactoring:
+
+[TASK: AGNO_INTEGRATION]
+"Synapticity's current agent initialization has too much overhead. Refactor the Agent base class to use Agno’s lean execution engine. Prioritize 'Micro-Agents' that can be instantiated and destroyed in microseconds. Ensure that each Agno-based neuron still maintains access to the SynapticMemory store to preserve plasticity across firing cycles."
+
+## 6. The "Hippocampus": Logseq (Persistence)
+Purpose: To store "Long-Term Potentiation" (LTP). When a project is finished, the lessons learned are stored here for the next project.
+
+for Memory Management:
+
+[ROLE: HIPPOCAMPUS_CONTROLLER]
+"At the end of every successful build, summarize the 'Winning Synaptic Path' (the sequence of prompts and fixes that worked). Export this as a Logseq Graph Entry under the #Synapticity_LTP namespace. Before starting a new task, query the Logseq graph for similar past projects. If a match is found, inject the 'Lesson Learned' into the Orchestrator's current working memory to prevent repeating past errors."
+
+
+## 7. The Offline Self-Learning StackFor a $0 budget, these tools turn your local machine into a training lab:
+Component           Tool (2026 Standard)            Role in Synapticity
+Fine-Tuning Engine  Unsloth (Open Source)           Up to 2x faster and 70% less VRAM. Fits 30B models on 16GB-24GB GPUs.
+Learning Logic      GRPO / RLHF                     Allows agents to "reason" and improve via internal rewards (no internet needed).    
+Data Generation     NVIDIA Nemotron-3 Nano          Small, local model that creates synthetic "training examples" from failed runs.
+Local Inference     Ollama + Gemma 4                The execution environment where the refined "neuron" lives.
+
+
+## 8. Prompt for "Offline Self-Learning" Implementation
+Use this prompt to have your Orchestrator build the local fine-tuning pipeline within your dev branch.
+Role: Lead Deep-Learning Engineer for Synapticity.
+Task: Implement an Offline Synaptic Consolidation (Local Fine-Tuning) pipeline. This system must trigger when the web is unavailable or when an agent's failure_rate exceeds 20%.
+Requirements:
+    Data Collection: Create a SynapticBuffer that stores failed agent outputs and their "reasoning traces.
+    Synthetic Repair: Use a local Gemma 4 model to generate "Corrected Synapses" (ground truth labels) for these failures.
+    Local Fine-Tune: Utilize the Unsloth API to perform a QLoRA fine-tune on the local software-engineer or tester model using the SynapticBuffer data.
+    Validation: Before deploying the new "Learned Neuron," run a local benchmark. If the performance improves, swap the weights; if not, discard and refine the synthetic data.
+    Constraints: $0 API cost. Must run on local NVIDIA/Metal hardware. Use GRPO for reasoning-based models (like DeepSeek-R1 or Qwen-Thinking) to improve logic without external feedback.
+    
+## 9. The "Self-Healing" Workflow (Offline)When the 5-account Gemini pool is offline or the internet is out, Synapticity shifts into "Deep Sleep Mode":
+    Reflection: The system gathers all recent "wrong" code snippets.
+    Dataset Creation: A small local model (Gemma 4 / Nemotron) generates "correct" versions of those snippets.
+    Optimization: Unsloth kicks in to "compress" these lessons into the local model's weights via QLoRA.
+    Waking Up: The next time the agent runs the task, it "remembers" the fix natively, without needing a long prompt or cloud reasoning.
+    
+## 10. Best Zero-Pricing Local Models for Fine-Tuning (2026)
+    For Logic/Reasoning: Qwen3-30B-A3B (MoE) — Fits on 24GB VRAM easily with Unsloth.
+    For Fast Coding: Gemma-4-16B — Extremely efficient for local instruction tuning.
+    For Data Filtering: Llama-3.4-8B — Perfect for acting as a "Critic" to filter out bad training data.
+    
+## 11. Professional Guidelines for Offline Training
+    Incremental Learning: Don't fine-tune after every error. Buffer at least 100 failure examples to avoid "Catastrophic Forgetting" (where the model learns the fix but forgets how to speak).
+    Checkpointing: Use Arize Phoenix (Open Source) locally to trace the training metrics.
+    Energy Management: Fine-tuning is heavy. Set your script to start the "Learning Cycle" only when the CPU/GPU usage is idle (e.g., at night).
+    
+## 12. The "Synaptic Weight" System (The Core of Synapticity)
+    Concept: Unlike standard agents that just "try again," Synapticity adjusts the internal weights of its neurons based on success probability.
+    Implementation:
+        Success: If an agent solves a problem, increase its weight (e.g., weight = weight * 1.5).
+        Failure: If an agent fails, decrease its weight (e.g., weight = weight * 0.5) and increase the weight of the agent that suggested the fix.
+        Memory: Store these weights in the SynapticMemory (Logseq) so the system "remembers" which agents are "smart" for future tasks.
+    Prompt Example:
+        [SYSTEM_PROMPT]
+        "You are the Synaptic Orchestrator. You have 5 specialized agents. Before assigning a task, calculate the 'Synaptic Weight' for each agent based on their past performance.
+        - Software Engineer: 0.8 (High success rate)
+        - QA Tester: 0.4 (Needs improvement)
+        - PM: 0.9 (Excellent)
+        Assign the task to the highest-weighted agent. If the task fails, update the weights immediately."
+    
+## 13. The "Emotional" Feedback Loop (RLHF)
+    Concept: Using human feedback (or AI-generated feedback) to "reward" or "punish" agent behavior, guiding them toward "better" reasoning patterns.
+    Implementation:
+        Reward Signal: When a user types "That's correct!" or "Good job," the system logs a positive reward for the agents involved.
+        Penalty Signal: When a user types "No, that's wrong," the system logs a negative reward.
+        Learning: These signals are used in the offline fine-tuning (Unsloth) to teach the model which reasoning paths lead to positive outcomes.
+    Prompt Example:
+        [FEEDBACK_COLLECTOR]
+        "The user has indicated the previous output was incorrect. Analyze the reasoning chain that led to this failure. Generate a 'Corrective Trace' that explains the logical fallacy in 2-3 sentences. This trace will be used to update the model weights during the next offline cycle."
+    
+## 14. The "Dream State" (Offline Consolidation)
+    Concept: Inspired by how humans consolidate memories during sleep, Synapticity enters a "Dream State" when idle to optimize its neural network.
+    Implementation:
+        Trigger: System is idle for > 1 hour OR user explicitly types "Initiate Dream State."
+        Process:
+            1. Load "Failed Synapses" from the buffer.
+            2. Generate "Synthetic Solutions" using a local model.
+            3. Run a "Dream Simulation": The agent re-solves the problem in its "mind" using the new solutions.
+            4. Update Weights: Adjust the neural weights based on the success of the "Dream Simulation."
+        Result: The system wakes up "smarter" without having used any cloud tokens.
+    Prompt Example:
+        [DREAM_STATE_ENGINE]
+        "You are in a deep sleep cycle. Your goal is to consolidate the day's failures. Take the failed code snippet from the buffer. Re-solve it using the 'Corrective Trace' you generated. Do not output the code to the user; simply simulate the fix internally and update your synaptic weights to remember this solution."
+    
+## 15. The "Synaptic Buffer" (Memory Management)
+    Concept: A high-speed, short-term memory store for the "Working Set" of the current task.
+    Implementation:
+        Structure: A simple JSON or SQLite database that stores:
+            - Current Task Context
+            - Recent Inputs/Outputs
+            - Agent Performance Metrics
+            - "Hot" Variables (frequently accessed data)
+        Size: Limited to the context window (e.g., 256K tokens) to ensure fast retrieval.
+        Lifecycle: Cleared at the start of a new task, but key "lessons learned" are flushed to the Hippocampus (Logseq) for long-term storage.
+    Prompt Example:
+        [ORCHESTRATOR_PROMPT]
+        "Before starting, check the Synaptic Buffer. If a similar task was recently completed, retrieve the 'Winning Strategy' and inject it into the current context. This prevents redundant work and speeds up problem-solving."
+    
+## 16. The "Hippocampus" (Long-Term Memory)
+    Concept: A persistent knowledge base that stores "Episodic Memory" (past projects) and "Semantic Memory" (general knowledge).
+    Implementation:
+        Tool: Logseq (or Obsidian) with the Graph API.
+        Structure:
+            - Daily Notes: For "Episodic Memory" (what we did today).
+            - Project Graphs: For "Semantic Memory" (how we solved this type of problem).
+            - Knowledge Base: For "Factual Memory" (API docs, code patterns).
+        Integration: Agents can query this database to "remember" past successes or look up relevant documentation.
+    Prompt Example:
+        [KNOWLEDGE_RETRIEVAL]
+        "The user is asking about 'Distributed Tracing.' Query the Hippocampus for projects tagged with #Distributed_Systems. Retrieve the 'Best Practices' summary and the 'Common Pitfalls' section. Inject this knowledge into the current context to ensure the Software Engineer provides an optimized solution."
+    
+## 17. The "Sensory Cortex" (External Input)
+    Concept: A dedicated module for gathering real-time information from the web to overcome the model's knowledge cutoff.
+    Implementation:
+        Tools: Firecrawl, Perplexity API, or custom web scrapers.
+        Process:
+            1. Identify Knowledge Gap: If the model is unsure about a recent API or library.
+            2. Sensory Input: Use the Sensory Cortex to fetch the latest documentation.
+            3. Integration: Inject the fetched data into the model's context.
+        Constraint: Only activate when necessary to save tokens and time.
+    Prompt Example:
+        [SENSORY_INPUT]
+        "The Software Engineer needs to implement 'React 19 Hooks.' The model's knowledge cutoff is 2025. Activate the Sensory Cortex to fetch the latest React 19 documentation from the official website. Return the 'Core API Changes' summary for integration."
+    
+## 18. The "Motor Cortex" (Execution Engine)
+    Concept: The primary execution engine that interfaces with the LLM.
+    Implementation:
+        Framework: Agno (for speed) or LangChain (for features).
+        Model: Gemma 4 (local) or Gemini 3 (cloud).
+        Safety: Implement a "Circuit Breaker" that stops execution if the model enters an infinite loop or generates harmful content.
+    Prompt Example:
+        [EXECUTION_COMMAND]
+        "Execute the following plan using the Motor Cortex:
+        1. Initialize the Software Engineer agent.
+        2. Load the project context from the Synaptic Buffer.
+        3. Execute the 'Implement Feature' plan.
+        4. Monitor for errors and update the Synaptic Buffer."
+    
+## 19. The "Pruning" Mechanism (Self-Correction)
+    Concept: A process to "prune" (remove) inefficient or incorrect neural pathways.
+    Implementation:
+        Trigger: When an agent consistently fails or generates low-quality output.
+        Process:
+            1. Identify "Bad" Weights: Find agents with low synaptic weights.
+            2. Analyze Failures: Determine the root cause of the failures.
+            3. Prune: Reduce the weight of the failing agent and/or remove its specific training data from the buffer.
+            4. Re-train: Use the remaining data to reinforce the "good" pathways.
+    Prompt Example:
+        [PRUNING_ALGORITHM]
+        "The QA Tester agent has a success rate of only 30%. Analyze the last 10 failures. If the failures are due to 'lack of knowledge,' trigger a Sensory Input to fetch documentation. If the failures are due to 'poor reasoning,' trigger a Dream State to retrain the logic."
+    

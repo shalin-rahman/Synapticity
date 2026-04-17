@@ -1,4 +1,4 @@
-# Synapticity 3.2: The Master Architecture Map
+# Synapticity 3.3: The Master Architecture Map
 
 Welcome to the definitive breakdown of the Synapticity framework! We've documented how all the core engines, models, and workflows plug into each other so you can quickly understand exactly how the system pulls off autonomous engineering.
 
@@ -8,52 +8,58 @@ Welcome to the definitive breakdown of the Synapticity framework! We've document
 
 ```mermaid
 flowchart TD
-    %% Component Boundaries
-    subgraph CLI [CLI Boundary]
+    subgraph CLI
         Main["main.py"]
         Registry["Command Registry"]
         Handlers["Command Handlers"]
     end
 
-    subgraph CORE [Orchestration Boundary]
+    subgraph CORE
         Engine["MissionEngine"]
         Review["ProjectReviewEngine"]
         SelfLearn["ReflectionEngine"]
         Phases["Mission Phases"]
     end
 
-    subgraph AGENT [Agent Management]
+    subgraph AGENT
         Dispatcher["Agent Dispatcher"]
         Runner["AgentRunner"]
     end
 
-    subgraph STATE [State and Sandbox Boundary]
+    subgraph STATE
         Workspace["MissionWorkspace"]
         StateMgr["MissionStateManager"]
         Runtime["RuntimeRunner"]
         Skills["SkillRegistry"]
     end
 
-    subgraph MODELS [Intelligence Boundary]
+    subgraph MODELS
         Base["AbstractModel"]
         Ollama["OllamaAdapter"]
         Gemini["GeminiAdapter"]
         Claude["ClaudeAdapter"]
     end
 
-    subgraph UTILS [Utilities Boundary]
+    subgraph UTILS
         Deployer["GitDeployer"]
         Indexer["ProjectIndexer"]
         Logger["MemoryLogger"]
         Doctor["SynapticDoctor"]
+        Sensory["SensoryCortex Firecrawl"]
+        Metabolic["MetabolicManager"]
     end
 
-    %% Flow Dynamics
+    subgraph MEMORY
+        Buffer["SynapticBuffer"]
+        Hippocampus["Hippocampus Logseq"]
+        Offline["OfflineConsolidator"]
+    end
+
     Main --> Registry
     Registry --> Handlers
-    Handlers -->|Launch or Resume| Engine
-    Handlers -->|Review| Review
-    Handlers -->|Learn| SelfLearn
+    Handlers --> Engine
+    Handlers --> Review
+    Handlers --> SelfLearn
 
     Engine --> Phases
     Engine --> Dispatcher
@@ -63,22 +69,25 @@ flowchart TD
     Phases --> Runner
     Dispatcher --> Runner
 
-    Runner -->|Loads contextual| Skills
+    Runner --> Skills
     Runner --> Base
-    Base <|-- Ollama
-    Base <|-- Gemini
-    Base <|-- Claude
+    Ollama --> Base
+    Gemini --> Base
+    Claude --> Base
 
-    Phases -->|Executes generated code| Runtime
-    Engine -->|Loads or Saves| StateMgr
-    Engine -->|Writes artifacts| Workspace
+    Phases --> Runtime
+    Engine --> StateMgr
+    Engine --> Workspace
 
-    Review -->|Scans user code| Indexer
-    Engine -->|Pushes to GitHub| Deployer
-    Runner -->|Captures prompts| Logger
+    Review --> Indexer
+    Engine --> Deployer
+    Runner --> Logger
+    Engine --> Sensory
+    Runner --> Metabolic
+    SelfLearn --> Offline
+    Offline --> Hippocampus
+    Phases --> Buffer
 ```
-
----
 
 ---
 
@@ -115,34 +124,31 @@ If you want to know what the framework is actually moving around in memory, here
 
 ```mermaid
 flowchart TD
-    %% Define Data Nodes
-    Input([User Mission String])
-    StateNode[("state.json (Status Tracker)")]
-    PlaybookNode[("skills/*.md (Playbooks)")]
-    PromptNode(["Monolithic Context Prompt"])
-    SpecsNode(["specs.json (Blueprint)"])
-    CodeNode(["Raw Synthesized Code"])
-    ResultNode(["Sandbox stdout & stderr"])
-    VerifiedNode(["Hardened Source Code"])
-    DeployNode([GitHub Live Repository])
-    ReflectionNode[("autonomous-lessons/*.md")]
+    Input["User Mission String"]
+    StateNode["state.json Tracker"]
+    PlaybookNode["Engineering Playbooks"]
+    PromptNode["Monolithic Context"]
+    SpecsNode["specs.json Blueprint"]
+    CodeNode["Synthesized Code"]
+    ResultNode["Sandbox Result"]
+    VerifiedNode["Hardened Source Code"]
+    DeployNode["GitHub Repository"]
+    ReflectionNode["Autonomous Lessons"]
 
-    %% Operations
-    Input -->|MissionEngine runs| StateNode
-    Input -->|Keyword Search| PlaybookNode
-    PlaybookNode -->|Injected by AgentRunner| PromptNode
+    Input --> StateNode
+    Input --> PlaybookNode
+    PlaybookNode --> PromptNode
     
-    PromptNode -->|AI API Request| SpecsNode
-    SpecsNode -->|Handed to SWE Agent| CodeNode
+    PromptNode --> SpecsNode
+    SpecsNode --> CodeNode
     
-    CodeNode -->|Tested by RuntimeRunner| ResultNode
-    ResultNode -->|Feed loops back on FAIL| CodeNode
+    CodeNode --> ResultNode
+    ResultNode --> CodeNode
     
-    ResultNode -->|Breaks out on Dual PASS| VerifiedNode
-    VerifiedNode -->|GitDeployer Push| DeployNode
-    VerifiedNode -->|Analyzed by ReflectionEngine| ReflectionNode
+    ResultNode --> VerifiedNode
+    VerifiedNode --> DeployNode
+    VerifiedNode --> ReflectionNode
 
-    %% Styling
     style StateNode fill:#1E1E1E,stroke:#3498db,stroke-width:2px,color:#fff
     style PlaybookNode fill:#1E1E1E,stroke:#3498db,stroke-width:2px,color:#fff
     style SpecsNode fill:#1E1E1E,stroke:#3498db,stroke-width:2px,color:#fff
@@ -150,51 +156,174 @@ flowchart TD
     style DeployNode fill:#2E86C1,stroke:#ECF0F1,stroke-width:2px,color:#fff
 ```
 
+
 ### The Code-Level DFD
-If you want to look deeply under the hood, here is how the physical variables and payloads are passed between the Python classes inside the core engine:
+
+The following traces the **exact Python variables and method calls** as they flow through the engine during a full mission lifecycle. Split into three stages for clarity.
+
+#### Stage A: Bootstrap and Planning
 
 ```mermaid
 flowchart TD
-    %% Python Class Level Data Flow
-    subgraph Core Orchestration
-        ME["MissionEngine.run()"]
-        PP["PlanningPhase.run()"]
-        HCP["HealingCyclePhase.run()"]
+    subgraph BOOT [Engine Bootstrap]
+        R1["_resolve_optimal_routing()"]
+        R2["OllamaAdapter / GeminiAdapter / ClaudeAdapter"]
+        R3["PerformanceAnalytics checks stats_file"]
+        R4["6x AgentRunner created with primary + fallback"]
     end
 
-    subgraph Intelligence Dispatch
-        AR["AgentRunner.run(prompt, context)"]
-        Base["AbstractModel.generate()"]
+    subgraph PLAN [Phase 1 - Planning]
+        P1["MissionStateManager.load() returns state dict"]
+        P2["_parse_custom_directives returns clean_obj + directives"]
+        P3["PlanningPhase.run()"]
+        P4["generate_context_hash checks specs.json cache"]
+        P5["SkillRegistry.inject scans keywords"]
+        P6["AgentRunner.run sends objective to PM persona"]
+        P7["AbstractModel.generate returns specs string"]
+        P8["specs.json written to disk with hash"]
     end
 
-    subgraph Sandbox Verification
-        RR["RuntimeRunner.execute(code)"]
-        Sec["RuntimeRunner.scan_security(code)"]
-    end
+    R1 --> R3
+    R3 --> R2
+    R2 --> R4
 
-    %% Flow of actual variables
-    ME -->|phase='START', goal=string| PP
-    
-    PP -->|Generates Planning Context| AR
-    AR -->|payload={'role':'user', 'content':...}| Base
-    Base -->|Returns '## Specs' string| AR
-    AR -->|Returns specs.json string| PP
-    PP -->|Updates dict: state['specs']| ME
-    
-    ME -->|specs, phase='DEVELOPMENT'| HCP
-    HCP -->|System prompt: 'You are SWE'| AR
-    AR -->|payload={'role':'user', 'content':specs}| Base
-    Base -->|Returns raw Python code| AR
-    AR -->|Returns code string| HCP
-    
-    HCP -->|Passes script_content| RR
-    RR -->|Returns {'stdout': str, 'success': bool}| HCP
-    HCP -->|Passes script_content| Sec
-    Sec -->|Returns Bandit JSON dict| HCP
-    
-    HCP -->|Passes QA context on FAIL| AR
-    HCP -->|Returns clean string on PASS| ME
+    R4 --> P1
+    P1 --> P2
+    P2 --> P3
+    P3 --> P4
+    P4 --> P5
+    P5 --> P6
+    P6 --> P7
+    P7 --> P8
+    P8 --> P3
 ```
+
+#### Stage B: Development and Healing Cycle
+
+```mermaid
+flowchart TD
+    subgraph DEV [Phase 2 - Development]
+        D1["SkillRegistry.inject builds context string"]
+        D2["AgentRunner.run sends specs to SWE persona"]
+        D3["AbstractModel.generate returns raw code"]
+        D4["strip_markdown_backticks cleans output"]
+        D5["state code stored in state dict"]
+    end
+
+    subgraph HEAL [Phase 3 - Healing Cycle]
+        H1["RuntimeRunner.run_python_code returns stdout stderr success"]
+        H2["RuntimeRunner.scan_quality returns clean and problems"]
+        H3["asyncio.gather runs QA and Security in parallel"]
+        H4["AgentRunner.run sends logs to QA persona"]
+        H5["RuntimeRunner.scan_security returns Bandit JSON"]
+        H6["AgentRunner.run sends scan to Security persona"]
+        H7["Check VERDICT PASS and VERDICT SECURE"]
+        H8["AgentRunner.run sends remediation to SWE persona"]
+        H9["strip_markdown_backticks returns patched code"]
+        H10["Loop back up to MAX_RETRY_ATTEMPTS"]
+    end
+
+    D1 --> D2
+    D2 --> D3
+    D3 --> D4
+    D4 --> D5
+
+    D5 --> H1
+    H1 --> H2
+    H2 --> H3
+    H3 --> H4
+    H3 --> H5
+    H5 --> H6
+    H4 --> H7
+    H6 --> H7
+    H7 --> H8
+    H8 --> H9
+    H9 --> H10
+    H10 --> H1
+```
+
+#### Stage C: Finalization and Self-Learning
+
+```mermaid
+flowchart TD
+    subgraph FINAL [Phase 4 - Finalization]
+        F1["AgentRunner.run sends specs + code to Writer persona"]
+        F2["Writer returns TECHNICAL_DOCS.md string"]
+        F3["AgentRunner.run sends code to DevOps persona"]
+        F4["DevOps returns GitHub Actions YAML string"]
+        F5["MissionWorkspace.commit_code writes to output dir"]
+        F6["MissionWorkspace.commit_docs writes TECHNICAL_DOCS.md"]
+        F7["MissionWorkspace.commit_pipeline writes main.yml"]
+        F8["MissionStateManager.save persists COMPLETED state"]
+    end
+
+    subgraph LEARN [Phase 5 - Self-Learning]
+        L1["ReflectionEngine.analyze reads MISSION_LOG.md"]
+        L2["AgentRunner.run sends audit trail to Reflector persona"]
+        L3["Reflector returns lessons string"]
+        L4["Lessons appended to skills autonomous-lessons skill.md"]
+    end
+
+    subgraph PERSIST [Data Stores]
+        S1["state.json on disk"]
+        S2["output dir with code docs and pipeline"]
+        S3["MISSION_LOG.md"]
+        S4["autonomous-lessons skill.md in skills dir"]
+        S5["MemoryLogger JSONL in logs dir"]
+    end
+
+    F1 --> F2
+    F3 --> F4
+    F2 --> F6
+    F4 --> F7
+    F5 --> S2
+    F6 --> S2
+    F7 --> S2
+    F8 --> S1
+
+    L1 --> S3
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> S4
+```
+
+#### Cross-Cutting: AgentRunner Internal Flow
+
+```mermaid
+flowchart TD
+    subgraph RUNNER [AgentRunner._dispatch_with_monitoring]
+        A1["Read persona .md file from agents dir"]
+        A2["Append USER_CUSTOM_DIRECTIVE if present"]
+        A3["Build final_prompt from context + task"]
+        A4["Start heartbeat monitoring thread"]
+        A5["Call model_adapter.generate with system + prompt"]
+        A6["MemoryLogger.log_interaction writes JSONL"]
+        A7["PerformanceAnalytics.log_inference records latency"]
+        A8["Return result string to caller"]
+    end
+
+    subgraph FAILOVER [Automatic Failover]
+        B1["ModelProviderError caught"]
+        B2["Switch to fallback_model adapter"]
+        B3["Retry _dispatch_with_monitoring"]
+    end
+
+    A1 --> A2
+    A2 --> A3
+    A3 --> A4
+    A4 --> A5
+    A5 --> A6
+    A6 --> A7
+    A7 --> A8
+
+    A5 --> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> A5
+```
+
+
 
 ---
 
@@ -211,7 +340,9 @@ Here's the breakdown of the heavy lifters making all the magic happen in the bac
 | `SkillRegistry` | Our digital bookshelf. When you run `inject(target_str)`, it matches keywords in your prompt with our best-practice markdown playbooks, automatically teaching the AI what it needs to know. |
 | `RuntimeRunner` | The sandbox. It uses `run_python_code(code)` to test things safely and `scan_security(code)` to run Bandit static analysis so nothing dangerous slips out. |
 | `ReflectionEngine` | The brains. `analyze(mission_id)` reads through old logs and figures out what the AI should remember for future tasks. |
+| `OfflineConsolidator` | The trainer. Executes Unsloth QLoRA fine-tuning and "Dream State" internal simulations to optimize model weights based on failed synapses. |
 | `MissionStateManager` | The memory drive. Its `load()` and `save()` methods safely write the `state.json` file so you can always resume right where you left off. |
+| `HippocampusController` | The librarian. Interfaces with Logseq/Obsidian Graph API to store Long-Term Potentiation (#Synapticity_LTP) indices. |
 
 ---
 
@@ -234,6 +365,8 @@ Here's the breakdown of the heavy lifters making all the magic happen in the bac
 | `GitDeployer` | Makes sharing code a breeze. `deploy(path, mission_id)` physically initializes a repo and forces it straight into GitHub. |
 | `ProjectIndexer` | The `build_context()` scanner can recursively unpack your entire local application folder into a single readable string so an AI can read your entire codebase at once. |
 | `MemoryLogger` | Uses `log_interaction()` to quietly append JSON lines in the background. It remembers everything said during a mission. |
+| `SensoryCortex` | The "Eyes". Uses Firecrawl to fetch real-time documentation and bridge the knowledge gap for recently released libraries. |
+| `MetabolicManager` | The "Energy Supply". Manages a 5-key pool and performs "Seamless Synaptic Handoffs" during 429 ResourceExhausted errors. |
 
 ---
 
