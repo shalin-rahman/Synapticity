@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     """
     
     # --- synaptic Core Identity ---
-    VERSION: str = "3.0.0"
+    VERSION: str = "3.3.0"
     
     # --- Gemini API Configuration ---
     GEMINI_ACTIVE: bool = False

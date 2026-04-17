@@ -1,4 +1,4 @@
-# Synapticity: Technical Framework Overview (v3.1)
+# Synapticity: Technical Framework Overview (v3.3)
 
 ## Executive Summary
 
@@ -22,24 +22,24 @@ The framework operates on a state-machine orchestrator that strictly enforces a 
 
 ```mermaid
 graph TD
-    User([Mission Objective]) --> PM[Product Manager]
-    PM -->|Technical Specs| SWE[Software Engineer]
-    
-    subgraph "The Healing Cycle (Parallel Verification)"
-        SWE -->|Code Artifacts| Runner[Runtime Sandbox]
-        Runner -->|Stdout/Stderr/Logs| QA[Tester Agent]
-        Runner -->|Security SAST| Sec[Security Auditor]
-        
-        QA -->|Functional Repairs| SWE
-        Sec -->|Security Patches| SWE
+    User["Mission Objective"] --> PM["Product Manager"]
+    PM --> SWE["Software Engineer"]
+
+    subgraph HEAL ["Healing Cycle"]
+        SWE --> Runner["Runtime Sandbox"]
+        Runner --> QA["Tester Agent"]
+        Runner --> SEC["Security Auditor"]
+        QA -->|Verify| SWE
+        SEC -->|Audit| SWE
     end
-    
-    QA & Sec -->|Dual PASS Verdict| Writer[Documentation]
-    Writer -->|Docs| DevOps[DevOps Engineer]
-    DevOps -->|Actions YAML| Git[Autonomous Git/GitHub Deployment]
-    
-    Git -->|Mission Logs| Reflector[Reflection Engine]
-    Reflector -->|New Lessons| Skills[Shared Knowledge Base]
+
+    QA --> Writer["Documentation"]
+    Sec --> Writer
+    Writer --> DevOps["DevOps Engineer"]
+    DevOps --> Git["GitHub Deployment"]
+
+    Git --> Reflector["Reflection Engine"]
+    Reflector --> Skills["Shared Knowledge Base"]
 ```
 
 ### Method-Level Execution Breakdown
@@ -55,42 +55,42 @@ sequenceDiagram
     participant HCP as HealingCyclePhase
     participant RR as RuntimeRunner
 
-    CLI->>ME: 1. run(mission_id, objective)
+    CLI->>ME: run mission_id, objective
     activate ME
-    
-    ME->>PP: 2. run(path, state, mission_id)
+
+    ME->>PP: run path, state, mission_id
     activate PP
-    PP->>SR: 9. inject(objective_text)
+    PP->>SR: inject objective_text
     SR-->>PP: Playbook Markdown
-    PP->>AR: 3. run() (Product Manager)
+    PP->>AR: run Product Manager
     activate AR
-    AR->>LLM: 11. generate(prompt)
+    AR->>LLM: generate prompt
     LLM-->>AR: Raw String
     AR-->>PP: Blueprint Specs
     deactivate AR
-    PP-->>ME: state.json (PLANNED)
+    PP-->>ME: state.json PLANNED
     deactivate PP
 
-    ME->>HCP: 4. run(path, state, specs, code)
+    ME->>HCP: run path, state, specs, code
     activate HCP
     loop Verification Cycle
-        HCP->>RR: 5. execute(script_content)
-        RR-->>HCP: {"stdout": ..., "success": ...}
-        HCP->>AR: 3. run() (QA/Security)
+        HCP->>RR: execute script_content
+        RR-->>HCP: stdout, success, stderr
+        HCP->>AR: run QA and Security
     end
     HCP-->>ME: Verified Source Code
     deactivate HCP
-    
+
     opt External Review Path
-        CLI->>ME: 6. ProjectReviewEngine.review(...)
-        ME->>ME: 7. ProjectIndexer.build_context()
+        CLI->>ME: ProjectReviewEngine.review
+        ME->>ME: ProjectIndexer.build_context
     end
 
     opt Post-Mission
-        ME->>ME: 10. GitDeployer.deploy()
-        ME->>ME: 8. ReflectionEngine.analyze()
+        ME->>ME: GitDeployer.deploy
+        ME->>ME: ReflectionEngine.analyze
     end
-    
+
     ME-->>CLI: Exit
     deactivate ME
 ```
