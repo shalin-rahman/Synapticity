@@ -284,10 +284,11 @@ flowchart TD
         A8["Return result string to caller"]
     end
 
-    subgraph FAILOVER ["Automatic Failover"]
-        B1["ModelProviderError caught"]
-        B2["Switch to fallback_model adapter"]
-        B3["Retry _dispatch_with_monitoring"]
+    subgraph FAILOVER ["Reliability Failover"]
+        B1["Current Local Model Error"]
+        B2["Switch to Secondary Local Model (Local Failover)"]
+        B3["Switch to Cloud Provider (Cloud Failover)"]
+        B4["Retry _dispatch_with_monitoring"]
     end
 
     A1 --> A2
@@ -301,7 +302,8 @@ flowchart TD
     A5 --> B1
     B1 --> B2
     B2 --> B3
-    B3 --> A5
+    B3 --> B4
+    B4 --> A5
 ```
 
 

@@ -32,7 +32,7 @@ The agents use "Skills" — specific sets of rules for things like FastAPI, Reac
 In the upcoming v3.4 release, the system will use **Firecrawl** to look up documentation on the web. This will help the AI learn about new libraries released after its training was finished.
 
 ### 4. Fast Local Running
-Synapticity can run local models (like Gemma 4) at high speed. It keeps models loaded in memory so they respond instantly for free.
+Synapticity can run local models (like Qwen 2.5 Coder) at high speed. It keeps models loaded in memory so they respond instantly for free.
 
 ---
 
@@ -67,7 +67,7 @@ pip install google-genai requests python-dotenv rich pydantic-settings cryptogra
 
 ### 2. Configure Your Engine
 
-1. **Local LLM:** Install [Ollama](https://ollama.com/). The framework is pre-configured to target `gemma4:latest` (or your chosen model) via `http://localhost:11434`.
+1. **Local LLM:** Install [Ollama](https://ollama.com/). The framework is pre-configured to target `qwen2.5-coder:7b` via `http://localhost:11434`.
 2. **Environment:** Copy `.env.example` to `.env`.
 3. **Hardware Lock:** Ensure you have assigned enough VRAM to your local model for the best reasoning performance.
 
@@ -85,14 +85,14 @@ Run the internal diagnostic engine to verify connectivity:
 
 | Command          | Usage Example                                            | Description                                                            |
 | :--------------- | :------------------------------------------------------- | :--------------------------------------------------------------------- |
-| **launch** | `./sync launch auth-svc "Build a JWT API"`             | Start a new 4-phase development mission.                               |
-| **resume** | `./sync resume auth-svc`                               | Continue a paused mission from the last checkpoint.                    |
-| **update** | `./sync update auth-svc "Add OAuth2 support"`          | Pivot an existing mission and re-plan specifications.                  |
-| **agent**  | `./sync agent auth-svc swe "Refactor utils.py"`        | Dispatch a solo agent for a targeted tactical task.                    |
-| **review** | `./sync review bug-fix "security audit" C:/my-project` | Run a 3-agent audit and patch loop on an EXTERNAL project.             |
-| **learn**  | `./sync learn auth-svc`                                | Synthesize lessons from a mission to update the shared knowledge base. |
-| **deploy** | `./sync deploy auth-svc`                               | Create a GitHub repository and push the verified project.              |
-| **stats**  | `./sync stats`                                         | View agent reliability, token usage, and engine performance metrics.   |
+| **launch** | `.\sync launch auth-svc "Build a JWT API"`             | Start a new 4-phase development mission.                               |
+| **resume** | `.\sync resume auth-svc`                               | Continue a paused mission from the last checkpoint.                    |
+| **update** | `.\sync update auth-svc "Add OAuth2 support"`          | Pivot an existing mission and re-plan specifications.                  |
+| **agent**  | `.\sync agent auth-svc swe "Refactor utils.py"`        | Dispatch a specialist for a manual task.                               |
+| **review** | `.\sync review bug-fix "security audit" C:/my-project` | Run a 3-agent audit and patch loop on an EXTERNAL project.             |
+| **learn**  | `.\sync learn auth-svc`                                | Synthesize lessons from a mission to update the shared knowledge base. |
+| **deploy** | `.\sync deploy auth-svc`                               | Create a GitHub repository and push the verified project.              |
+| **stats**  | `.\sync stats`                                         | View agent reliability, token usage, and engine performance metrics.   |
 
 ---
 

@@ -27,7 +27,13 @@ class IntelligenceRouter:
 
         primary, fallback = None, None
         if settings.OLLAMA_ACTIVE:
-            primary, fallback = ollama, cloud
+            primary = OllamaAdapter(settings.OLLAMA_MODEL)
+            # 1. Try local fallback first
+            if settings.OLLAMA_FALLBACK_MODEL:
+                fallback = OllamaAdapter(settings.OLLAMA_FALLBACK_MODEL)
+            # 2. Revert to cloud if no local fallback exists
+            else:
+                fallback = cloud
         elif cloud:
             primary, fallback = cloud, (gemini if claude and settings.GEMINI_ACTIVE else None)
         else:

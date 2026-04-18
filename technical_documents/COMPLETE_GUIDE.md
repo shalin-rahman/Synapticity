@@ -179,7 +179,7 @@ Synapticity/
 | `SLEEP_BUFFER`       | float | `4.0`                                   | Seconds between Gemini calls  |
 | `OLLAMA_ACTIVE`      | bool  | `True`                                  | Enable/disable local Ollama   |
 | `OLLAMA_URL`         | str   | `"http://localhost:11434/api/generate"` | Ollama API endpoint           |
-| `OLLAMA_MODEL`       | str   | `"gemma4:latest"`                       | Local model name              |
+| `OLLAMA_MODEL`       | str   | `"qwen2.5-coder:7b"`                       | Local model name              |
 | `CLAUDE_ACTIVE`      | bool  | `False`                                 | Enable/disable Claude         |
 | `CLAUDE_MODEL`       | str   | `"claude-3-5-sonnet-20240620"`          | Claude model name             |
 | `AGENT_PATH`         | str   | `"agents"`                              | Directory for persona files   |
@@ -729,7 +729,7 @@ This section traces a complete mission from the moment you type a command until 
 **Terminal output:**
 
 ```
-[10:15:22] PRODUCT-MANAGER started: Drafting Architectural Specs (via Ollama gemma4:latest)
+[10:15:22] PRODUCT-MANAGER started: Drafting Architectural Specs (via Ollama qwen2.5-coder:7b)
   ... PRODUCT-MANAGER is still Drafting Architectural Specs (30s elapsed)
   ... PRODUCT-MANAGER is still Drafting Architectural Specs (60s elapsed)
 [OK] PRODUCT-MANAGER: Drafting Architectural Specs finished (74.32s).
@@ -762,7 +762,7 @@ This section traces a complete mission from the moment you type a command until 
 
    Inside OllamaAdapter.generate():
      a. Builds JSON payload:
-        model: "gemma4:latest"
+        model: "qwen2.5-coder:7b"
         system: <product-manager.md content>
         prompt: <objective + skill playbooks>
         options: temperature 0.1, num_predict 2048, num_ctx 8192
@@ -803,7 +803,7 @@ This section traces a complete mission from the moment you type a command until 
 [SKILL] synaptic Skill Injected: code-quality-linting
 [SKILL] synaptic Skill Injected: fastapi-expert
 [SKILL] synaptic Skill Injected: devsecops-hardening
-[10:17:41] SOFTWARE-ENGINEER started: Synthesizing Source Code (via Ollama gemma4:latest)
+[10:17:41] SOFTWARE-ENGINEER started: Synthesizing Source Code (via Ollama qwen2.5-coder:7b)
   ... SOFTWARE-ENGINEER is still Synthesizing Source Code (30s elapsed)
 [OK] SOFTWARE-ENGINEER: Synthesizing Source Code finished (52.18s).
 
@@ -859,12 +859,12 @@ This section traces a complete mission from the moment you type a command until 
 +--------------------------+
 [QA] Checking logic and structure...
 [SEC] Checking for security vulnerabilities...
-[10:19:03] TESTER started: Verifying Functional Integrity (via Ollama gemma4:latest)
-[10:19:03] ONCALL-ENGINEER started: Performing Security Audit (via Ollama gemma4:latest)
+[10:19:03] TESTER started: Verifying Functional Integrity (via Ollama qwen2.5-coder:7b)
+[10:19:03] ONCALL-ENGINEER started: Performing Security Audit (via Ollama qwen2.5-coder:7b)
 [OK] TESTER: Verifying Functional Integrity finished (38.77s).
 [OK] ONCALL-ENGINEER: Performing Security Audit finished (41.22s).
 [REPAIR] Issues found. Starting automatic repairs...
-[10:19:45] SOFTWARE-ENGINEER started: Applying Expert Remediation (via Ollama gemma4:latest)
+[10:19:45] SOFTWARE-ENGINEER started: Applying Expert Remediation (via Ollama qwen2.5-coder:7b)
 [OK] SOFTWARE-ENGINEER: Applying Expert Remediation finished (45.10s).
 ```
 
@@ -928,8 +928,8 @@ This section traces a complete mission from the moment you type a command until 
 +--------------------------+
 [QA] Checking logic and structure...
 [SEC] Checking for security vulnerabilities...
-[10:20:48] TESTER started: Verifying Functional Integrity (via Ollama gemma4:latest)
-[10:20:48] ONCALL-ENGINEER started: Performing Security Audit (via Ollama gemma4:latest)
+[10:20:48] TESTER started: Verifying Functional Integrity (via Ollama qwen2.5-coder:7b)
+[10:20:48] ONCALL-ENGINEER started: Performing Security Audit (via Ollama qwen2.5-coder:7b)
 [OK] TESTER: Verifying Functional Integrity finished (33.50s).
 [OK] ONCALL-ENGINEER: Performing Security Audit finished (36.11s).
 [OK] Code verified and secure.
@@ -966,10 +966,10 @@ This section traces a complete mission from the moment you type a command until 
 
 ```
 [DOCS] Writing technical documentation...
-[10:22:15] WRITER started: Drafting Technical Hand-off (via Ollama gemma4:latest)
+[10:22:15] WRITER started: Drafting Technical Hand-off (via Ollama qwen2.5-coder:7b)
 [OK] WRITER: Drafting Technical Hand-off finished (28.44s).
 [CI] Generating the CI/CD pipeline...
-[10:22:44] DEVOPS-ENGINEER started: Architecting GitHub Actions Pipeline (via Ollama gemma4:latest)
+[10:22:44] DEVOPS-ENGINEER started: Architecting GitHub Actions Pipeline (via Ollama qwen2.5-coder:7b)
 [OK] DEVOPS-ENGINEER: Architecting GitHub Actions Pipeline finished (19.87s).
 [DONE] Finished: jwt-auth-api
 ```
@@ -1034,7 +1034,7 @@ workspace/jwt-auth-api/
 
 ```
 [REVIEW] Reviewing project history: jwt-auth-api...
-[10:25:01] REFLECTOR started: Analyzing Improvements (via Ollama gemma4:latest)
+[10:25:01] REFLECTOR started: Analyzing Improvements (via Ollama qwen2.5-coder:7b)
   ... REFLECTOR is still Analyzing Improvements (30s elapsed)
 [OK] REFLECTOR: Analyzing Improvements finished (47.33s).
 [LEARN] Review complete. Updated knowledge base: skills/autonomous-lessons/skill.md
@@ -1096,7 +1096,7 @@ workspace/jwt-auth-api/
 
 ```
 [RUN] Sending SWE into jwt-auth-api...
-[10:30:15] SOFTWARE-ENGINEER started: Add rate limiting... (via Ollama gemma4:latest)
+[10:30:15] SOFTWARE-ENGINEER started: Add rate limiting... (via Ollama qwen2.5-coder:7b)
 [OK] SOFTWARE-ENGINEER finished the task. Results are in the log.
 ```
 
@@ -1498,7 +1498,7 @@ sequenceDiagram
 
 ### 7.7 Solo Agent Dispatch
 
-When you run `./sync agent <id> <agent> <task>`:
+When you run `.\sync agent <id> <agent> <task>`:
 
 ```mermaid
 sequenceDiagram
@@ -1529,7 +1529,7 @@ sequenceDiagram
 
 ### 7.8 External Project Review
 
-When you run `./sync review ext-audit <path> <goal>`:
+When you run `.\sync review ext-audit <path> <goal>`:
 
 ```mermaid
 sequenceDiagram

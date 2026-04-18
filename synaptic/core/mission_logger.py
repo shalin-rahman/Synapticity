@@ -35,5 +35,5 @@ class MissionLogger:
                 f.write(f"**Action:** {entry.get('thought', 'Processing Task')}\n\n")
                 content = entry["content"]
                 f.write("```text\n")
-                f.write(content[:1000] + "\n... [TRUNCATED for brevity] ..." if len(content) > 1000 else content)
+                f.write(content)
                 f.write("\n```\n\n")

@@ -212,7 +212,8 @@
  
  ## Phase 23: Faster Code Execution
  -- [ ] Refactor **Agent Startup**: Move to a faster execution engine for sub-second agent boot-up.
- -- [ ] Optimize for **Local Hardware**: Tune for high-density local reasoning using 30B+ models.
+ -- [ ] Optimize for **Local Hardware (AMD/APU)**: Implement DirectML/ROCm support for integrated Radeon 780M graphics.
+ -- [ ] Tune for **Local Memory**: Optimize for high-density local reasoning using high-quantization (GGUF) models.
  
  ## Phase 24: Long-Term Memory
  -- [ ] Implement **External Sync (Logseq/Obsidian)**: Sync system knowledge with your personal notes and graph.

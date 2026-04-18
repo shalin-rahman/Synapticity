@@ -24,7 +24,8 @@ class Settings(BaseSettings):
     # --- Local LLM (Ollama) Configuration ---
     OLLAMA_ACTIVE: bool = True
     OLLAMA_URL: str = "http://localhost:11434/api/generate"
-    OLLAMA_MODEL: str = "gemma4:latest"
+    OLLAMA_MODEL: str = "qwen2.5-coder:7b"
+    OLLAMA_FALLBACK_MODEL: str = os.getenv("OLLAMA_FALLBACK_MODEL", "")
 
     # --- Claude (Anthropic) Configuration ---
     CLAUDE_ACTIVE: bool = False

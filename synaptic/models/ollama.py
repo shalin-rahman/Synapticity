@@ -20,11 +20,11 @@ class OllamaAdapter(AbstractModel):
     Now fully asynchronous for high-density workflow orchestration.
     """
     
-    def __init__(self):
+    def __init__(self, model_name: str = None):
         self.url = settings.OLLAMA_URL
         self.pull_url = self.url.replace("/generate", "/pull")
         self.tags_url = self.url.replace("/generate", "/tags")
-        self.model = settings.OLLAMA_MODEL
+        self.model = model_name or settings.OLLAMA_MODEL
         self._servicing = False
         
         # Non-blocking warm-up remains in background thread to avoid event loop contention on start
@@ -107,18 +107,18 @@ class OllamaAdapter(AbstractModel):
             "options": {
                 "temperature": 0.1,
                 "num_predict": 2048,
-                "num_ctx": 8192
+                "num_ctx": 4096
             }
         }
         
         try:
             return await self._make_request_async(payload)
         except Exception as e:
-            synaptic_log.error(f"Async Local AI Error: {e}")
+            synaptic_log.error(f"Async Local AI Error: {repr(e)}")
             raise ModelProviderError(f"Ollama Generation Failed: {e}")
 
     async def _make_request_async(self, payload: dict, is_retry: bool = False) -> str:
-        async with httpx.AsyncClient(timeout=600.0) as client:
+        async with httpx.AsyncClient(timeout=1800.0) as client:
             try:
                 response = await client.post(self.url, json=payload)
                 response.raise_for_status()

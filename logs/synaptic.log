@@ -747,3 +747,23 @@
 2026-04-18 17:04:58,702 - synaptic - INFO - Starting work: test-mission
 2026-04-18 17:23:18,215 - synaptic - ERROR - Async Local AI Error: 
 2026-04-18 17:23:18,220 - synaptic - INFO - [ANALYTICS] Performance logged for test-mission: Success=False, Repairs=0
+2026-04-18 17:53:10,915 - synaptic - INFO - Starting work: test-mission
+2026-04-18 18:03:11,694 - synaptic - ERROR - Async Local AI Error: 
+2026-04-18 18:03:11,697 - synaptic - INFO - [ANALYTICS] Performance logged for test-mission: Success=False, Repairs=0
+2026-04-18 19:00:49,966 - synaptic - INFO - Starting work: test-mission
+2026-04-18 19:00:52,419 - synaptic - ERROR - Async Local AI Error: HTTPStatusError("Client error '404 Not Found' for url 'http://localhost:11434/api/generate'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404")
+2026-04-18 19:00:52,419 - synaptic - WARNING - Failover triggered for SOFTWARE-ENGINEER: Ollama Generation Failed: Client error '404 Not Found' for url 'http://localhost:11434/api/generate'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2026-04-18 19:10:53,112 - synaptic - ERROR - Async Local AI Error: ReadTimeout('')
+2026-04-18 19:10:53,119 - synaptic - INFO - [ANALYTICS] Performance logged for test-mission: Success=False, Repairs=0
+2026-04-18 19:12:50,377 - synaptic - INFO - Starting work: test-mission
+2026-04-18 19:22:51,132 - synaptic - ERROR - Async Local AI Error: ReadTimeout('')
+2026-04-18 19:22:51,176 - synaptic - INFO - [ANALYTICS] Performance logged for test-mission: Success=False, Repairs=0
+2026-04-18 19:32:17,792 - synaptic - INFO - Starting work: test-mission
+2026-04-18 19:32:23,326 - synaptic - INFO - Ollama Warm-up initiated: qwen2.5-coder:7b
+2026-04-18 19:32:23,330 - synaptic - INFO - Ollama Warm-up initiated: qwen2.5-coder:7b
+2026-04-18 19:53:17,191 - synaptic - INFO - Starting work: test-mission
+2026-04-18 19:53:22,725 - synaptic - INFO - Ollama Warm-up initiated: qwen2.5-coder:7b
+2026-04-18 19:53:22,736 - synaptic - INFO - Ollama Warm-up initiated: qwen2.5-coder:7b
+2026-04-18 20:21:00,418 - synaptic - INFO - MISSION FINALIZING: test-mission
+2026-04-18 20:28:06,507 - synaptic - INFO - [ANALYTICS] Performance logged for test-mission: Success=True, Repairs=3
