@@ -11,7 +11,7 @@ class ModelProviderError(SynapticError):
     pass
 
 class WorkflowError(SynapticError):
-    """Raised when a mission lifecycle step fails."""
+    """Raised when a step in the project building process fails."""
     pass
 
 class SecurityAuditError(SynapticError):

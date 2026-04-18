@@ -9,8 +9,8 @@ console = Console()
 
 class RemoteResourceFetcher(ABC):
     """
-    Abstract Base Class for ingesting remote architectural assets.
-    Enforces DRY and SOLID principles for network operations.
+    Base class for downloading and saving files from the web.
+    Standardizes how the system handles network downloads.
     """
 
     def _convert_github_url_to_raw(self, url: str) -> str:
@@ -30,7 +30,7 @@ class RemoteResourceFetcher(ABC):
         pass
 
     def fetch(self, url: str, name: str) -> bool:
-        """Generic template method connecting, validating, formatting, and saving."""
+        """Connects to the URL, downloads the file, and saves it locally."""
         console.print(f"[{'bold cyan'}FETCH{'/bold cyan'}] Retrieving '{name}' from: {url}")
         
         raw_url = self._convert_github_url_to_raw(url)
@@ -41,17 +41,17 @@ class RemoteResourceFetcher(ABC):
             content = response.text
             
             if not content.strip():
-                console.print(f"[{'bold red'}ERROR{'/bold red'}] Fetched payload is empty.")
+                console.print(f"[{'bold red'}ERROR{'/bold red'}] The downloaded file is empty.")
                 return False
 
             normalized = self._normalize_content(name, content)
             self._save_content(name, normalized)
             
-            console.print(f"[{'bold green'}SUCCESS{'/bold green'}] Resource '{name}' ingested successfully.")
+            console.print(f"[{'bold green'}SUCCESS{'/bold green'}] Resource '{name}' imported successfully.")
             return True
 
         except requests.exceptions.RequestException as e:
-            console.print(f"[{'bold red'}FAIL{'/bold red'}] Network error during ingestion: {e}")
+            console.print(f"[{'bold red'}FAIL{'/bold red'}] Network error during download: {e}")
             return False
 
 class SkillIngestor(RemoteResourceFetcher):
@@ -76,7 +76,7 @@ class AgentIngestor(RemoteResourceFetcher):
     def _normalize_content(self, name: str, raw_content: str) -> str:
         # Agents require strict system instructions, but no heavy markdown normalization.
         # We ensure it ends cleanly.
-        header = f"--- ROLE INGESTION: {name.upper()} ---\n"
+        header = f"--- ROLE IMPORT: {name.upper()} ---\n"
         cleaned = raw_content.strip() + "\n"
         return header + cleaned
 

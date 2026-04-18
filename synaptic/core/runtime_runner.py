@@ -29,7 +29,7 @@ class RuntimeRunner:
                 os.remove(tmp_path)
 
     def run_python_code(self, code: str) -> dict:
-        """Executes raw Python code and returns technical execution metrics."""
+        """Executes raw Python code and returns detailed execution results."""
         from synaptic.config import settings
         start_time = time.time()
         

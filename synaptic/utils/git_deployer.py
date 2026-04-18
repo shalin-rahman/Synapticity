@@ -8,12 +8,12 @@ console = Console()
 
 class GitDeployer:
     """
-    Automates the autonomous deployment of Synapticity missions directly to new GitHub repositories.
+    Automatically deploys Synapticity projects directly to new GitHub repositories.
     """
 
     def __init__(self, mission_id: str):
         self.mission_id = mission_id
-        # We always bind strictly to the localized output code directory
+        # The path is strictly bound to the local output code directory
         self.target_dir = os.path.abspath(os.path.join(settings.WORKSPACE_PATH, mission_id, "output"))
 
     def deploy(self):
@@ -27,7 +27,7 @@ class GitDeployer:
             console.print("Mission codebase remains purely localized.")
             return
 
-        console.print(f"[{'bold cyan'}DEPLOY{'/bold cyan'}] Initializing autonomous GitHub remote deployment...")
+        console.print(f"[{'bold cyan'}DEPLOY{'/bold cyan'}] Starting GitHub deployment...")
         
         # 1. Initialize Local Git
         try:
@@ -47,18 +47,18 @@ class GitDeployer:
             console.print(f"[{'bold red'}FAIL{'/bold red'}] Local git initialization failed: {e}")
             return
 
-        # 2. Map and Construct Remote Repository
+        # 2. Create Remote Repository
         repo_url = self._create_remote_repo()
         if not repo_url:
             return
 
-        # 3. Synchronize Remote and Push
+        # 3. Push code to remote
         try:
-            # Drop old remote if exists 
+            # Remove old remote if it exists 
             subprocess.run(["git", "remote", "remove", "origin"], cwd=self.target_dir, capture_output=True)
             
             self._run_cmd(["git", "remote", "add", "origin", repo_url])
-            console.print(f"[{'bold cyan'}SYNC{'/bold cyan'}] Pushing payload to {repo_url} ...")
+            console.print(f"[{'bold cyan'}SYNC{'/bold cyan'}] Pushing code to {repo_url} ...")
             self._run_cmd(["git", "push", "-u", "origin", "main", "--force"])
             console.print(f"[{'bold green'}SUCCESS{'/bold green'}] Code deployed perfectly to GitHub!")
             console.print(f"Repository URL: {repo_url.replace('.git', '')}")
@@ -67,7 +67,7 @@ class GitDeployer:
             console.print(f"[{'bold red'}FAIL{'/bold red'}] Autonomous sync mechanism failed: {e}")
 
     def _create_remote_repo(self) -> str:
-        """Calls the precise GitHub v3 REST API to generate a new private project structure."""
+        """Calls the GitHub API to create a new private repository."""
         url = "https://api.github.com/user/repos"
         headers = {
             "Authorization": f"token {settings.GITHUB_TOKEN}",
@@ -88,7 +88,7 @@ class GitDeployer:
                 return f"https://{settings.GITHUB_USER}:{settings.GITHUB_TOKEN}@github.com/{settings.GITHUB_USER}/{self.mission_id}.git"
 
             # Otherwise create it natively
-            console.print(f"[{'bold cyan'}API{'/bold cyan'}] Establishing new remote instance '{self.mission_id}'...")
+            console.print(f"[{'bold cyan'}API{'/bold cyan'}] Creating new remote repository '{self.mission_id}'...")
             res = requests.post(url, headers=headers, json=payload, timeout=15)
             
             if res.status_code == 201:

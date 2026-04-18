@@ -1,5 +1,5 @@
 """
-Text formatting utilities for agent output sanitization.
+Text formatting utilities for cleaning AI output.
 """
 import re
 

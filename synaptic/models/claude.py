@@ -1,6 +1,6 @@
 """
 Claude Model Adapter (Async Version)
-High-precision reasoning driver for Anthropic's Claude models.
+Driver for Anthropic's Claude models.
 """
 
 import httpx
@@ -11,8 +11,8 @@ from synaptic.utils.exceptions import ModelProviderError
 
 class ClaudeAdapter(AbstractModel):
     """
-    Synaptic Adapter for Anthropic Claude.
-    Optimized for high-density asynchronous I/O via httpx.
+    Claude Adapter.
+    Designed for fast, non-blocking requests.
     """
 
     def __init__(self):

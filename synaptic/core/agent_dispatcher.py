@@ -1,6 +1,6 @@
 """
-Agent dispatcher — resolves agent aliases and executes solo dispatches.
-Single Responsibility: owns all agent name-to-runner resolution logic.
+Agent dispatcher — runs specific agents for targeted tasks.
+Single Responsibility: resolves agent names and dispatches them.
 """
 from synaptic.utils.exceptions import WorkflowError
 

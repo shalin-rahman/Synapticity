@@ -1,12 +1,12 @@
 {
-    "total_missions": 1,
-    "first_pass_success_rate": 100.0,
+    "total_missions": 2,
+    "first_pass_success_rate": 50.0,
     "average_repairs_per_mission": 0.0,
     "agent_metrics": {
         "gemma4:latest": {
-            "total": 1,
+            "total": 2,
             "repairs": 1,
-            "failures": 0
+            "failures": 1
         }
     },
     "mission_history": [
@@ -16,6 +16,14 @@
             "success": true,
             "repairs": 1,
             "duration_seconds": 3290.03,
+            "model_used": "gemma4:latest"
+        },
+        {
+            "timestamp": "2026-04-18T17:23:18.217310",
+            "mission_id": "test-mission",
+            "success": false,
+            "repairs": 0,
+            "duration_seconds": 1099.51,
             "model_used": "gemma4:latest"
         }
     ],

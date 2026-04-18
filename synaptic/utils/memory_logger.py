@@ -5,8 +5,8 @@ from synaptic.config import settings
 
 class MemoryLogger:
     """
-    Logs raw LLM transcripts (System, User Prompt, Output) for deep debugging, 
-    auditing, and potential model fine-tuning datasets.
+    Logs AI conversations for troubleshooting and auditing. (raw LLM transcripts (System, User Prompt, Output) for deep debugging, 
+    auditing, and potential model fine-tuning datasets.)
     """
     
     @staticmethod
@@ -35,4 +35,4 @@ class MemoryLogger:
             with open(transcript_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(payload, ensure_ascii=False) + "\n")
         except Exception:
-            pass # Fail silently for background telemetry
+            pass # Fail silently for background logging
