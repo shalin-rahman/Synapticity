@@ -1562,3 +1562,22 @@ sequenceDiagram
 ```
 
 ---
+
+## Part 8: Troubleshooting & Operations
+
+### 8.1 System Logs
+Synapticity archives all background operations, API calls, and errors into the `logs/` directory.
+
+- **Daily Rotation**: The framework creates a new log file every 24 hours (e.g., `synaptic.log.2023-04-18`).
+- **History**: By default, the system keeps the last 30 days of logs. Older logs are automatically deleted to save space.
+- **Log Level**: You can change how much detail is saved by modifying `LOG_LEVEL` in your `.env` file (e.g., `DEBUG` for more detail, `INFO` for standard).
+
+### 8.2 The Approval Gate
+To ensure total control over the development process, the system uses a **Human-In-The-Loop** approval gate.
+
+1.  **Planning Phase**: The Product Manager agent creates the project specs.
+2.  **User Review**: The system pauses and asks you to review the specs in the terminal.
+3.  **Authorization**: Pressing **[ENTER]** authorizes the Software Engineer to begin coding. This prevents the AI from building large projects that don't match your expectations.
+
+### 8.3 Project Guide Retrieval
+Every completed mission generates a **`PROJECT_GUIDE.md`** inside the `workspace/<mission_id>/` folder. This is the master hand-off document intended for human developers who will maintain the code in the future.

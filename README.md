@@ -13,6 +13,8 @@ Version 3.3.0 adds structural improvements to make the system more stable, faste
 - **Plain Simple English:** All documentation, CLI messages, and system logs are direct and human-friendly. The update removes complex AI jargon in favor of clear language.
 - **Smart Model Routing:** A new internal router automatically picks the best AI model available based on settings and project history.
 - **Unified State Management:** State saving and loading is faster and more reliable, with better recovery if a file is corrupted.
+- **Daily Log Rotation:** The system now creates fresh logs every day and keeps 30 days of history, making troubleshooting much easier.
+- **Approval Gates:** You now have full control over the mission. The system pauses after the planning phase so you can review the technical blueprints before any code is written.
 - **Simplified Project Output:** The system generates a **PROJECT_GUIDE.md** instead of technical docs, making it easier to hand over the work.
 - **Updated Requirements:** All necessary tools are included in the requirements list for a smoother setup.
 
@@ -47,6 +49,8 @@ Take granular control of your team by injecting role-specific instructions direc
 
 - **Precision Steering**: Use tags like `[SWE: use FastAPI]` or `[QA: focus on performance]` to override default behaviors.
 - **Global Persistence**: Instructions are stored in the mission state and prioritized during every healing and verification cycle.
+- **Daily Logs**: The system automatically archives session logs into `logs/YYYY-MM-DD/`, ensuring you can audit any specific day's work.
+- **Approval Gates**: The `MissionEngine` pauses execution after the planning phase, requiring a manual `y/n` confirmation before the `SWE` agent begins implementation.
 - **Supported Roles**: `[PM: ...]`, `[SWE: ...]`, `[QA: ...]`, `[SEC: ...]`, `[DOC: ...]`.
 
 ---

@@ -108,7 +108,7 @@ At its core, Synapticity is driven by a state-machine. It moves through five dis
    - Once finished, `MissionWorkspace.commit_code()` safely saves it all straight into your mission folder.
 5. **Phase 3 - The Healing Cycle (Parallel QA)**:
    - This is the cool part. `RuntimeRunner` executes the new code in a secure sandbox.
-   - At the exact same time, the `MissionEngine` asks both the **QA** and **Security Auditor** agents to review the results using `concurrent.futures`.
+   - At the exact same time, the `MissionEngine` asks both the **QA** and **Security Auditor** agents to review the results using `asyncio.gather`.
    - If they catch a bug, the **Software Engineer** gets pinged to apply a fix. This loops until everyone agrees the code is perfect.
 6. **Phase 4 - Wrap Up**:
    - The **Technical Writer** drafts up your markdown documentation.
