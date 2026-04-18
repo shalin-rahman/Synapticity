@@ -158,13 +158,13 @@ flowchart TD
 
 ### The Code-Level DFD
 
-The following traces the **exact Python variables and method calls** as they flow through the engine during a full mission lifecycle. Split into three stages for clarity.
+#### Master Mission Lifecycle: The Data Journey
 
-#### Stage A: Bootstrap and Planning
+The following traces the **exact Python variables and method calls** as they flow through the engine in one continuous, autonomous lifecycle.
 
 ```mermaid
 flowchart TD
-    subgraph BOOT ["Engine Bootstrap"]
+    subgraph BOOT ["Stage A: Bootstrap"]
         R1["_resolve_optimal_routing()"]
         R2["OllamaAdapter / GeminiAdapter / ClaudeAdapter"]
         R3["PerformanceAnalytics checks stats_file"]
@@ -182,27 +182,7 @@ flowchart TD
         P8["specs.json written to disk with hash"]
     end
 
-    R1 --> R3
-    R3 --> R2
-    R2 --> R4
-
-    R4 --> P1
-    P1 --> P2
-    P2 --> P3
-    P3 --> P4
-    P4 --> P5
-    P5 --> P6
-    P6 --> P7
-    P7 --> P8
-    P8 --> P3
-```
-```
-
-#### Stage B: Development and Healing Cycle
-
-```mermaid
-flowchart TD
-    subgraph DEV [Phase 2 - Development]
+    subgraph DEV ["Phase 2 - Development"]
         D1["SkillRegistry.inject builds context string"]
         D2["AgentRunner.run sends specs to SWE persona"]
         D3["AbstractModel.generate returns raw code"]
@@ -210,8 +190,8 @@ flowchart TD
         D5["state code stored in state dict"]
     end
 
-    subgraph HEAL [Phase 3 - Healing Cycle]
-        H1["RuntimeRunner.run_python_code returns stdout stderr success"]
+    subgraph HEAL ["Phase 3 - Healing Cycle"]
+        H1["RuntimeRunner.run_python_code returns execution dict"]
         H2["RuntimeRunner.scan_quality returns clean and problems"]
         H3["asyncio.gather runs QA and Security in parallel"]
         H4["AgentRunner.run sends logs to QA persona"]
@@ -223,30 +203,7 @@ flowchart TD
         H10["Loop back up to MAX_RETRY_ATTEMPTS"]
     end
 
-    D1 --> D2
-    D2 --> D3
-    D3 --> D4
-    D4 --> D5
-
-    D5 --> H1
-    H1 --> H2
-    H2 --> H3
-    H3 --> H4
-    H3 --> H5
-    H5 --> H6
-    H4 --> H7
-    H6 --> H7
-    H7 --> H8
-    H8 --> H9
-    H9 --> H10
-    H10 --> H1
-```
-
-#### Stage C: Finalization and Self-Learning
-
-```mermaid
-flowchart TD
-    subgraph FINAL [Phase 4 - Finalization]
+    subgraph FINAL ["Phase 4 - Finalization"]
         F1["AgentRunner.run sends specs + code to Writer persona"]
         F2["Writer returns TECHNICAL_DOCS.md string"]
         F3["AgentRunner.run sends code to DevOps persona"]
@@ -257,42 +214,66 @@ flowchart TD
         F8["MissionStateManager.save persists COMPLETED state"]
     end
 
-    subgraph LEARN [Phase 5 - Self-Learning]
+    subgraph LEARN ["Phase 5 - Self-Learning"]
         L1["ReflectionEngine.analyze reads MISSION_LOG.md"]
         L2["AgentRunner.run sends audit trail to Reflector persona"]
         L3["Reflector returns lessons string"]
         L4["Lessons appended to skills autonomous-lessons skill.md"]
     end
 
-    subgraph PERSIST [Data Stores]
-        S1["state.json on disk"]
-        S2["output dir with code docs and pipeline"]
-        S3["MISSION_LOG.md"]
-        S4["autonomous-lessons skill.md in skills dir"]
-        S5["MemoryLogger JSONL in logs dir"]
-    end
-
+    %% Connections across stages
+    R1 --> R3
+    R3 --> R2
+    R2 --> R4
+    R4 --> P1
+    P1 --> P2
+    P2 --> P3
+    P3 --> P4
+    P4 --> P5
+    P5 --> P6
+    P6 --> P7
+    P7 --> P8
+    P8 --> P3
+    
+    P3 --> D1
+    D1 --> D2
+    D2 --> D3
+    D3 --> D4
+    D4 --> D5
+    
+    D5 --> H1
+    H1 --> H2
+    H2 --> H3
+    H3 --> H4
+    H3 --> H5
+    H5 --> H6
+    H4 --> H7
+    H6 --> H7
+    H7 -->|Loop if FAIL| H8
+    H8 --> H9
+    H9 --> H10
+    H10 --> H1
+    
+    H7 -->|Proceed if PASS| F1
     F1 --> F2
     F3 --> F4
     F2 --> F6
     F4 --> F7
-    F5 --> S2
-    F6 --> S2
-    F7 --> S2
-    F8 --> S1
-
-    L1 --> S3
+    F5 --> F8
+    F6 --> F8
+    F7 --> F8
+    F8 --> L1
+    
     L1 --> L2
     L2 --> L3
     L3 --> L4
-    L4 --> S4
 ```
 
 #### Cross-Cutting: AgentRunner Internal Flow
 
 ```mermaid
 flowchart TD
-    subgraph RUNNER [AgentRunner._dispatch_with_monitoring]
+    subgraph RUNNER ["AgentRunner._dispatch_with_monitoring"]
         A1["Read persona .md file from agents dir"]
         A2["Append USER_CUSTOM_DIRECTIVE if present"]
         A3["Build final_prompt from context + task"]
@@ -303,7 +284,7 @@ flowchart TD
         A8["Return result string to caller"]
     end
 
-    subgraph FAILOVER [Automatic Failover]
+    subgraph FAILOVER ["Automatic Failover"]
         B1["ModelProviderError caught"]
         B2["Switch to fallback_model adapter"]
         B3["Retry _dispatch_with_monitoring"]

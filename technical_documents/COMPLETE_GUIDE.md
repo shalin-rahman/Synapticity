@@ -565,13 +565,13 @@ Each `.md` file is a system instruction that defines an agent's identity, constr
 
 ```mermaid
 flowchart TD
-    subgraph CLI
+    subgraph CLI ["CLI Hub"]
         MAIN["main.py"]
         REG["COMMAND_REGISTRY"]
         HANDLERS["Handler Functions"]
     end
 
-    subgraph CORE
+    subgraph CORE ["Orchestration Engine"]
         ME["MissionEngine"]
         PP["PlanningPhase"]
         HCP["HealingCyclePhase"]
@@ -587,14 +587,14 @@ flowchart TD
         RE["ReflectionEngine"]
     end
 
-    subgraph MODELS
+    subgraph MODELS ["Intelligence Adapters"]
         BASE["AbstractModel"]
         OLL["OllamaAdapter"]
         GEM["GeminiAdapter"]
         CLA["ClaudeAdapter"]
     end
 
-    subgraph UTILS
+    subgraph UTILS ["System Utilities"]
         DOC["SynapticDoctor"]
         GIT["GitDeployer"]
         IDX["ProjectIndexer"]
@@ -1146,7 +1146,9 @@ workspace/jwt-auth-api/
 
 This section traces the exact Python variables, return types, and disk artifacts produced at every phase of a mission. Each diagram shows the calling class on the left and the data payload on the arrows.
 
----
+## Stage A: Bootstrap and Planning
+
+Before the first agent is assigned a task, the engine must resolve its operational environment and establish a technical blueprint for the project.
 
 ### 7.1 Phase 0: Bootstrap & Model Routing
 
@@ -1290,7 +1292,13 @@ workspace/jwt-auth-api/
 
 ---
 
+## Stage B: Development and Healing Cycle
+
+This stage represents the core "Engineering Engine" of Synapticity. It transforms architectural specifications into verified, production-grade source code through an iterative synthesis and verification loop.
+
 ### 7.3 Phase 2: Development
+
+This phase is responsible for the initial synthesis of the source code. The Software Engineer agent uses the architectural blueprint (specs) and matched engineering playbooks to generate raw code.
 
 ```mermaid
 sequenceDiagram
@@ -1337,6 +1345,8 @@ workspace/jwt-auth-api/
 ---
 
 ### 7.4 Phase 3: Healing Cycle (Verification & Repair)
+
+The most critical stage of the mission. It ensures the code is physically executable, functionally correct, and secure. This phase enters an autonomous loop until all verification gates are satisfied or the retry limit is reached.
 
 This runs in a loop (max `MAX_RETRY_ATTEMPTS` = 3 iterations).
 
@@ -1410,6 +1420,10 @@ workspace/jwt-auth-api/
 ```
 
 ---
+
+## Stage C: Finalization and Self-Learning
+
+The final stage of the mission handles the conversion of verified code into deployable project artifacts and captures mission intelligence to improve future performance.
 
 ### 7.5 Phase 4: Finalization
 
