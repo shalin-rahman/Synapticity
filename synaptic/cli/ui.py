@@ -4,7 +4,8 @@ import time
 from rich.table import Table
 from rich.panel import Panel
 from synaptic.config import settings
-from synaptic.cli.utils import console, load_state
+from synaptic.cli.utils import console
+from synaptic.core.mission_state import MissionStateManager
 
 
 def show_dashboard() -> None:
@@ -23,7 +24,8 @@ def show_dashboard() -> None:
             if not os.path.isdir(path):
                 continue
             title, verdict, status = "New Project", "Pending", "Initialized"
-            state = load_state(mission)
+            state_mgr = MissionStateManager(path)
+            state = state_mgr.load()
             if state:
                 title   = state.get("title", mission.replace("-", " ").title())
                 verdict = state.get("verdict", "Pending")

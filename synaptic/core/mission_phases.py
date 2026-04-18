@@ -5,6 +5,7 @@ Each class handles the logic for a specific phase of the workflow.
 import os
 import json
 import re
+import asyncio
 import concurrent.futures
 from rich.panel import Panel
 from rich.console import Console

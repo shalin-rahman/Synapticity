@@ -4,7 +4,8 @@ import sys
 from rich.table import Table
 from rich.markdown import Markdown
 from synaptic.config import settings
-from synaptic.cli.utils import console, sanitize_id, require_args, load_state
+from synaptic.cli.utils import console, sanitize_id, require_args
+from synaptic.core.mission_state import MissionStateManager
 
 
 def handle_audit() -> None:
@@ -17,7 +18,8 @@ def handle_audit() -> None:
         console.print(f"[red]Error: Mission {mission_id} not found.[/]")
         return
 
-    state = load_state(mission_id)
+    state_mgr = MissionStateManager(workspace)
+    state = state_mgr.load()
     if not state:
         console.print(f"[red]No tasks recorded for {mission_id}.[/]")
         return

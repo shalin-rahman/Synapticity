@@ -21,8 +21,8 @@
     ],
     "inference_metrics": {
         "Ollama": {
-            "calls": 9,
-            "total_duration": 3988.207463979721
+            "calls": 10,
+            "total_duration": 4203.551334619522
         }
     }
 }
