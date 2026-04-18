@@ -19,19 +19,3 @@ def require_args(count: int, usage: str) -> bool:
         console.print(f"[red]{usage}[/]")
         return False
     return True
-
-
-def load_state(mission_id: str) -> dict | None:
-    """Loads state.json for a mission. Returns None if missing."""
-    path = os.path.join(settings.WORKSPACE_PATH, mission_id, settings.STATE_FILE)
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return None
-
-
-def save_state(mission_id: str, state: dict) -> None:
-    """Persists state.json for a mission."""
-    path = os.path.join(settings.WORKSPACE_PATH, mission_id, settings.STATE_FILE)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(state, f)

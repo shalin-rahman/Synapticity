@@ -1,27 +1,45 @@
 # Synapticity Framework (v3.3)
 
-Synapticity is an autonomous software development platform engineered for precision-grade project synthesis. It operates as a digital "Smart Factory," coordinating a specialized hierarchy of AI agents to manage the entire lifecycle—from high-level planning and secure implementation to autonomous CI/CD deployment.
+Synapticity is a tool that builds software projects automatically. Instead of just writing snippets, it uses a team of AI agents to handle the whole job — from planning and coding to testing and launching.
 
-By combining low-latency local processing (via Ollama) with a high-capacity cloud fallback (via Gemini/Claude), Synapticity provides the most resilient and secure environment for autonomous software engineering.
+It can run entirely on your own computer using **Ollama**, or connect to cloud models like **Gemini** and **Claude**.
 
 ---
 
-## Core Philosophy: The Smart Factory
+## Recent Updates (v3.3.0)
 
-### 1. Verification-First Culture
+Version 3.3.0 adds structural improvements to make the system more stable, faster, and easier to use. Here is what’s new:
 
-We prioritize quality through a strict "Verification Gate." A code artifact isn't considered complete until it passes both functional testing and security checks. If it finds a defect, the system automatically runs a Healing Cycle to apply patches without needing you to step in.
+- **Plain Simple English:** All documentation, CLI messages, and system logs are direct and human-friendly. The update removes complex AI jargon in favor of clear language.
+- **Smart Model Routing:** A new internal router automatically picks the best AI model available based on settings and project history.
+- **Unified State Management:** State saving and loading is faster and more reliable, with better recovery if a file is corrupted.
+- **Simplified Project Output:** The system generates a **PROJECT_GUIDE.md** instead of technical docs, making it easier to hand over the work.
+- **Updated Requirements:** All necessary tools are included in the requirements list for a smoother setup.
 
-### 2. Smart Thinking Playbooks
+---
 
-Unlike basic LLM wrappers, Synapticity injects specialized **Engineering Playbooks** (Skills) directly into the agents' context. These playbooks provide world-class standards for SOLID design, OWASP security, and Agile product management.
+## How it Works
 
-### 3. Sensory Intelligence & 2026 Ready
+### 1. Constant Testing
+The system won't finish a project until it passes every test. If there's a bug or a security hole, the AI tries to fix it automatically in a loop.
 
-Equipped with a **Sensory Cortex** (Firecrawl), Synapticity can fetch real-time documentation for post-training libraries (like React 19 or recent architecture updates), overcoming the knowledge cutoff of standard LLMs.
+### 2. Expert Playbooks
+The agents use "Skills" — specific sets of rules for things like FastAPI, React, or security. This helps them follow best practices without you having to explain them every time.
 
-### 4. Warp-Speed Local Intelligence
-Optimized for the "Free-Forever" setup, the framework includes hardware-level optimizations for Ollama, including non-blocking model pre-warming and infinite VRAM residency, delivering a "Claude-like" experience at zero cost.
+### 3. Live Research (Roadmap)
+In the upcoming v3.4 release, the system will use **Firecrawl** to look up documentation on the web. This will help the AI learn about new libraries released after its training was finished.
+
+### 4. Fast Local Running
+Synapticity can run local models (like Gemma 4) at high speed. It keeps models loaded in memory so they respond instantly for free.
+
+---
+
+## Troubleshooting
+
+- **Model is slow:** Make sure the AI model fits in your GPU memory (VRAM). If it uses regular RAM, it will be much slower.
+- **API Errors:** Run `./sync doctor` to check your keys and internet connection.
+- **Permission Denied:** If on Windows, try running your terminal as Administrator.
+- **Ollama not found:** Ensure Ollama is running in your taskbar before starting a mission.
 
 ### 4. Surgical Custom Directives
 

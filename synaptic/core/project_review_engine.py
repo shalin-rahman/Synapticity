@@ -39,21 +39,21 @@ class ProjectReviewEngine:
         # --- Review Pass: Product Manager assesses the architecture ---
         arch_review = await self._engine.planner.run(
             f"REVIEW GOAL: {goal}\n\nPROJECT CONTEXT:\n{context}",
-            task="Performing Architecture & Quality Review",
+            task="Reviewing the code structure",
             mission_id=mission_id
         )
 
         # --- Improvement Pass: SWE proposes concrete code changes ---
         improvement = await self._engine.coder.run(
             f"REVIEW GOAL: {goal}\n\nARCHITECTURE REVIEW:\n{arch_review}\n\nPROJECT CONTEXT:\n{context}",
-            task="Proposing Concrete Code Improvements",
+            task="Planning code improvements",
             mission_id=mission_id
         )
 
         # --- Security Pass ---
         sec_review = await self._engine.auditor.run(
             f"REVIEW GOAL: {goal}\n\nPROJECT CONTEXT:\n{context}",
-            task="Security & Vulnerability Assessment",
+            task="Checking for security issues",
             mission_id=mission_id
         )
 
@@ -74,16 +74,16 @@ class ProjectReviewEngine:
     def _generate_summary_report(self, path: str, goal: str, files: list, arch: str, improv: str, sec: str) -> str:
         """Constructs a professional markdown report from the review findings."""
         return (
-            f"# Synaptic External Project Review\n\n"
-            f"**Project:** `{path}`\n"
+            f"# Project Review Report\n\n"
+            f"**Project Path:** `{path}`\n"
             f"**Goal:** {goal}\n"
             f"**Files Reviewed:** {len(files)}\n\n"
             f"---\n\n"
-            f"## Architecture & Quality Review\n\n{arch}\n\n"
+            f"## Structure & Quality Review\n\n{arch}\n\n"
             f"---\n\n"
-            f"## Proposed Improvements\n\n{improv}\n\n"
+            f"## Suggested Improvements\n\n{improv}\n\n"
             f"---\n\n"
-            f"## Security Assessment\n\n{sec}\n"
+            f"## Security Audit\n\n{sec}\n"
         )
 
     def _persist_review_artifact(self, mission_id: str, report: str) -> str:

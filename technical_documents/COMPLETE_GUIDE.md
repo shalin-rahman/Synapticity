@@ -1,36 +1,25 @@
-# Synapticity v3.3: The Complete Technical Guide
+# Synapticity: The Complete Project Guide (v3.3)
 
-> Written for someone who is brand new to the AI ecosystem. This guide starts with the fundamentals of how AI works, then takes you through every single class and method in the Synapticity framework.
+Welcome! This guide explains how Synapticity works. It's a tool that builds software projects automatically by managing a team of AI agents. 
+
+This guide is simple so anyone can understand it, and it also includes the technical details needed to dig deep into the code.
 
 ---
 
-## Part 1: AI Fundamentals (For Beginners)
+## Part 1: The Basics
 
-### What is a Large Language Model (LLM)?
+Synapticity is like a digital workshop. Instead of you writing every line of code yourself, you give the system a goal, and it manages the rest of the work.
 
-An LLM is a computer program that has been trained on billions of sentences from books, websites, and code repositories. After this training, it can predict what text should come next given a prompt. When you type "Write a Python function that sorts a list," the model generates the code by predicting, one word at a time, the most likely response.
+### 1.1 The Team
 
-**Key takeaway**: An LLM does not "understand" code the way a human does. It is an extremely powerful pattern-matching engine trained on human knowledge.
+When you start a mission, the system uses several different agents. Each one has a specific job:
 
-### How Do You Talk to an LLM? (API Calls)
-
-You communicate with an LLM by sending it two pieces of text over the internet:
-
-1. **System Instruction**: A hidden instruction that tells the AI *who it is*. For example: "You are a senior Python engineer. Write production-quality code."
-2. **User Prompt**: The actual task you want done. For example: "Build a FastAPI JWT authentication router."
-
-The AI processes both and returns a **response string** — usually code, text, or structured data.
-
-### What is an "Agent"?
-
-An agent is an LLM wrapped with extra logic. Instead of just sending one prompt and getting one answer, an agent can:
-
-- **Use tools** (run code, search the web, read files)
-- **Follow a workflow** (plan first, then code, then test)
-- **Remember context** (keep track of what happened before)
-- **Make decisions** (if the test fails, fix the code and try again)
-
-Synapticity is a **multi-agent system** — it runs a team of specialized agents (Product Manager, Software Engineer, QA Tester, etc.) that collaborate on a project.
+1.  **Product Manager:** Plans the project and writes down the requirements.
+2.  **Software Engineer:** Writes the actual code.
+3.  **QA Tester:** Runs the code to make sure it works and looks for bugs.
+4.  **Security Auditor:** Checks the code for security holes.
+5.  **Technical Writer:** Writes the documentation for the project.
+6.  **DevOps Engineer:** Sets up the deployment pipelines (like GitHub Actions).
 
 ### What is a "Model Adapter"?
 

@@ -37,7 +37,7 @@ def handle_admin() -> None:
     password = getpass.getpass("Enter Admin Passcode: ")
     if password == settings.ADMIN_PASSCODE:
         console.print("[bold green][OK] Authentication Successful.[/]")
-        console.print("[dim]Admin persona self-management capabilities unlocked...[/]")
-        # Future: Meta-Cognitive Auto-Config logic
+        console.print("[dim]Admin features unlocked.[/]")
+        # Roadmap: Configuration tools for advanced users.
     else:
         console.print("[bold red][FAIL] Authentication Denied.[/]")

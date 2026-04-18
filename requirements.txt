@@ -3,5 +3,10 @@ requests
 python-dotenv
 rich
 pydantic-settings
+httpx
 agno
 langfuse
+pydantic
+ruff
+bandit
+pylint

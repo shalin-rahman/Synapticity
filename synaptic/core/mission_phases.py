@@ -39,7 +39,7 @@ class PlanningPhase:
         print("[PLAN] Planning the project structure...")
         specs = await self._planner.run(
             state["objective"], 
-            task="Drafting Architectural Specs", 
+            task="Planning the architecture", 
             mission_id=mission_id,
             directive=directive
         )
@@ -84,7 +84,7 @@ class HealingCyclePhase:
             qa_result, sec_result = results
 
             if "VERDICT: SECURE" in sec_result and "VERDICT: PASS" in qa_result and quality["clean"]:
-                print("[OK] Code verified and secure.")
+                print("[OK] Code looks good and is safe.")
                 state["verdict"] = "[bold green][OK] PASS[/]"
                 return code
 
@@ -98,7 +98,7 @@ class HealingCyclePhase:
             )
             raw_repair = await self._coder.run(
                 f"REMEDIATION_DIRECTIVE: {directive}\nORIGINAL_CODE: {code}",
-                task="Applying Expert Remediation",
+                task="Fixing the issues",
                 mission_id=mission_id,
                 directive=directives.get("swe")
             )
@@ -132,7 +132,7 @@ class HealingCyclePhase:
         result = await self._tester.run(
             f"Specs: {specs}\nRuntime Logs: {runtime_log}\n"
             f"IDE_PROBLEMS_WINDOW: {quality['problems']}\nCODE_UNDER_TEST:\n{code}",
-            task="Verifying Functional & Structural Integrity",
+            task="Testing the code",
             mission_id=mission_id,
             directive=directive
         )
@@ -144,7 +144,7 @@ class HealingCyclePhase:
         audit  = self._runtime.scan_security(code)
         result = await self._auditor.run(
             f"CODE:\n{code}\nSTATIC_SCAN_REPORT: {audit['summary']}",
-            task="Performing Zero-Trust Security Audit",
+            task="Checking the security",
             mission_id=mission_id,
             directive=directive
         )

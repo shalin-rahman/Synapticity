@@ -9,12 +9,12 @@ load_dotenv()
 
 class Settings(BaseSettings):
     """
-    Global configuration for the The State of Intelligent Connection.
+    Global configuration for Synapticity.
     Values can be overridden via .env file or environment variables.
     """
     
-    # --- synaptic Core Identity ---
-    VERSION: str = "3.3.0"  # Incremented for Sensory Intelligence & Metabolic Scaling
+    # --- Core Identity ---
+    VERSION: str = "3.3.0"  # Advanced features and faster performance
     
     # --- Gemini API Configuration ---
     GEMINI_ACTIVE: bool = False
@@ -42,7 +42,6 @@ class Settings(BaseSettings):
     ENABLE_HOT_RELOAD: bool = True  # FileSystem Watcher toggle for SkillRegistry
     
     # --- Persona Filenames ---
-    AGENT_ORCHESTRATOR: str = "orchestrator.md"
     AGENT_PM: str = "product-manager.md"
     AGENT_SWE: str = "software-engineer.md"
     AGENT_QA: str = "tester.md"
@@ -58,7 +57,6 @@ class Settings(BaseSettings):
     
     # --- Persistent State ---
     TRACKER_FILE: str = "tracker.json"
-    USAGE_LOG_FILE: str = "usage_log.json"
     STATE_FILE: str = "mission_state.json"
     LOG_LEVEL: str = "INFO"
     

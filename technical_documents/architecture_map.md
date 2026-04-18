@@ -1,6 +1,6 @@
-# Synapticity 3.3: The Master Architecture Map
+# Synapticity 3.3: Master Architecture Map
 
-Welcome to the definitive breakdown of the Synapticity framework! We've documented how all the core engines, models, and workflows plug into each other so you can quickly understand exactly how the system pulls off autonomous engineering.
+This map shows how the different parts of Synapticity work together. You can use it to understand how the system moves from your initial goal to a finished software project.
 
 ---
 
@@ -165,7 +165,7 @@ The following traces the **exact Python variables and method calls** as they flo
 ```mermaid
 flowchart TD
     subgraph BOOT ["Stage A: Bootstrap"]
-        R1["_resolve_optimal_routing()"]
+        R1["IntelligenceRouter.resolve() returns models"]
         R2["OllamaAdapter / GeminiAdapter / ClaudeAdapter"]
         R3["PerformanceAnalytics checks stats_file"]
         R4["6x AgentRunner created with primary + fallback"]
@@ -205,11 +205,11 @@ flowchart TD
 
     subgraph FINAL ["Phase 4 - Finalization"]
         F1["AgentRunner.run sends specs + code to Writer persona"]
-        F2["Writer returns TECHNICAL_DOCS.md string"]
+        F2["Writer returns PROJECT_GUIDE.md string"]
         F3["AgentRunner.run sends code to DevOps persona"]
         F4["DevOps returns GitHub Actions YAML string"]
         F5["MissionWorkspace.commit_code writes to output dir"]
-        F6["MissionWorkspace.commit_docs writes TECHNICAL_DOCS.md"]
+        F6["MissionWorkspace.commit_docs writes PROJECT_GUIDE.md"]
         F7["MissionWorkspace.commit_pipeline writes main.yml"]
         F8["MissionStateManager.save persists COMPLETED state"]
     end
@@ -308,46 +308,52 @@ flowchart TD
 
 ---
 
-## 3. Core Engines & Libraries (`synaptic/core/`)
+---
 
-Here's the breakdown of the heavy lifters making all the magic happen in the background:
+## 3. Core Parts (`synaptic/core/`)
 
-| Component | What it does |
+These are the main engines that run the system.
+
+| Part | What it does |
 | :--- | :--- |
-| `MissionEngine` | The big boss (`mission_engine.py`). It calls `run(mission_id, objective)` to walk through the 5 phases, uses `_resolve_optimal_routing()` to pick the healthiest AI model gracefully, and runs `_finalize()` to wrap up your workspace. |
-| `AgentRunner` | The worker bee. Its `run(prompt, context, task)` method talks to the AI, while `_dispatch_with_monitoring()` and `_run_progress_monitor()` keep your CLI updated so you aren't left staring at a blank screen. |
-| `PlanningPhase` & `HealingCyclePhase` | Found in `mission_phases.py`, these manage translating goals into specs, or managing that awesome parallel retry-loop when fixing bugs. |
-| `ProjectReviewEngine` | The codebase auditor. You can point `review(project_path, ...)` at any local code folder, and it will analyze the files and suggest direct code patches. |
-| `SkillRegistry` | Our digital bookshelf. When you run `inject(target_str)`, it matches keywords in your prompt with our best-practice markdown playbooks, automatically teaching the AI what it needs to know. |
-| `RuntimeRunner` | The sandbox. It uses `run_python_code(code)` to test things safely and `scan_security(code)` to run Bandit static analysis so nothing dangerous slips out. |
-| `ReflectionEngine` | The brains. `analyze(mission_id)` reads through old logs and figures out what the AI should remember for future tasks. |
-| `OfflineConsolidator` | The trainer. Executes Unsloth QLoRA fine-tuning and "Dream State" internal simulations to optimize model weights based on failed synapses. |
-| `MissionStateManager` | The memory drive. Its `load()` and `save()` methods safely write the `state.json` file so you can always resume right where you left off. |
-| `HippocampusController` | The librarian. Interfaces with Logseq/Obsidian Graph API to store Long-Term Potentiation (#Synapticity_LTP) indices. |
+| `MissionEngine` | Manages the project from start to finish. It uses the `IntelligenceRouter` to pick models and handles the final output. |
+| `IntelligenceRouter`| **(NEW)** Selects the best AI model for the job based on your config and project history. |
+| `AgentRunner` | Handles the actual calls to the AI and updates the status bar so you can see what's happening. |
+| `PlanningPhase` | Plans the project architecture before any code is written. |
+| `HealingCyclePhase`| Runs a loop of testing and fixing until the code works perfectly. |
+| `ProjectReviewEngine` | Analyzes an existing project folder and suggests ways to improve it. |
+| `SkillRegistry` | Matches your goal with technical rules (Skills) and sends them to the AI agents. |
+| `RuntimeRunner` | Runs the AI-generated code in a safe sandbox to see if it works. |
+| `ReflectionEngine` | Looks at the mission log after it's finished to learn from any mistakes. |
+| `OfflineConsolidator` | **(Roadmap)** Fine-tunes local models using data from past missions. |
+| `MissionStateManager` | Saves the project progress to `state.json` so you can resume it later. |
+| `HippocampusController`| Stores the long-term history of your projects in a graph. |
 
 ---
 
-## 3. The Brains: AI Intelligence (`synaptic/models/`)
+## 4. AI Models (`synaptic/models/`)
 
-| File & Class      | How it thinks                                                                                                                                         |
-| :---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AbstractModel` | The basic contract that says "If you want to be an AI brain here, you must be able to `generate()` text."                                           |
-| `OllamaAdapter` | Our**Zero-Latency local driver**. It keeps models infinitely loaded in the background using a `-1 keep_alive` trick so they answer instantly. |
-| `GeminiAdapter` | Our**Cloud fallback**. It automatically rotates through API keys to keep you from hitting rate limits.                                          |
-| `ClaudeAdapter` | The**Heavy hitter**. When we really need to figure out complex architectural problems, we default to Claude's Sonnet or Opus brains.            |
+Synapticity can use several different AI brains.
+
+| Adapter | Description |
+| :--- | :--- |
+| `AbstractModel` | The standard set of rules that all AI adapters must follow. |
+| `OllamaAdapter` | The local driver. It runs AI models on your own computer for free. |
+| `GeminiAdapter` | The cloud driver for Google's Gemini models. It handles key rotation automatically. |
+| `ClaudeAdapter` | The cloud driver for Anthropic's Claude models. |
 
 ---
 
-## 4. Helpful Utilities (`synaptic/utils/`)
+## 5. Extra Tools (`synaptic/utils/`)
 
-| Utility            | What it helps with                                                                                                                                                        |
-| :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `SynapticDoctor` | If you run `run_full_service()`, it checks your keys, models, and connections, and even auto-fixes things using `heal()`.                                             |
-| `GitDeployer`    | Makes sharing code a breeze.`deploy(path, mission_id)` physically initializes a repo and forces it straight into GitHub.                                                |
-| `ProjectIndexer` | The `build_context()` scanner can recursively unpack your entire local application folder into a single readable string so an AI can read your entire codebase at once. |
-| `MemoryLogger` | Uses `log_interaction()` to quietly append JSON lines in the background. It remembers everything said during a mission. |
-| `SensoryCortex` | The "Eyes". Uses Firecrawl to fetch real-time documentation and bridge the knowledge gap for recently released libraries. |
-| `MetabolicManager` | The "Energy Supply". Manages a 5-key pool and performs "Seamless Synaptic Handoffs" during 429 ResourceExhausted errors. |
+| Tool | Purpose |
+| :--- | :--- |
+| `SynapticDoctor` | Checks that your AI keys and connections are working correctly. |
+| `GitDeployer` | Automatically creates a GitHub repo and pushes your new code. |
+| `ProjectIndexer` | Reads all the files in a folder and packages them for the AI to read. |
+| `MemoryLogger` | Logs every message sent to and from the AI agents. |
+| `SensoryCortex` | **(Roadmap)** Looks up live documentation on the web to help the AI agents. |
+| `MetabolicManager` | **(Roadmap)** Manages a pool of API keys to avoid rate limit errors. |
 
 ---
 
@@ -363,9 +369,9 @@ Here's the breakdown of the heavy lifters making all the magic happen in the bac
 
 ## 6. Keeping Things Safe & Fast
 
-We put a lot of work into making sure this framework doesn't just work, but works *well*:
+The framework is designed to be fast and secure:
 
-1. **Speed**: We preload the models into VRAM and run QA and Security tests at the exact same time to eliminate wait times.
-2. **Safety**: We sandbox the code and run Bandit vulnerability checks so generated scripts don't mess up your computer.
-3. **Persistence**: `state.json` means you will never lose progress on a mission, even if your computer crashes.
-4. **Resilience**: If your local AI gets overloaded, it effortlessly fails over to Gemini cloud routing so the mission never stops.
+1. **Speed**: Processing models in VRAM and running QA and Security tests at the same time eliminates wait times.
+2. **Safety**: Code sandboxing and Bandit vulnerability checks help ensure generated scripts are safe.
+3. **Persistence**: The `state.json` tracker keeps project progress safe, even if the system stops unexpectedly.
+4. **Resilience**: If a local AI becomes overloaded, the system fails over to cloud routing so the mission continues.

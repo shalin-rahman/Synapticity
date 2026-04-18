@@ -55,11 +55,11 @@ class RemoteResourceFetcher(ABC):
             return False
 
 class SkillIngestor(RemoteResourceFetcher):
-    """Concrete implementation for sourcing Playbooks and Skills."""
+    """Concrete implementation for sourcing skills."""
     
     def _normalize_content(self, name: str, raw_content: str) -> str:
-        header = f"# Synaptic Expert Playbook: {name.replace('-', ' ').title()}\n"
-        header += "> Extracted and Normalized via Synaptic Ingestion Engine\n\n---\n\n"
+        header = f"# Skill Guide: {name.replace('-', ' ').title()}\n"
+        header += "> Imported Skill\n\n---\n\n"
         cleaned = re.sub(r'\n{3,}', '\n\n', raw_content)
         return header + cleaned
 

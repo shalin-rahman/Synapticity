@@ -201,25 +201,29 @@
  
  ---
  
- ## Phase 22: Sensory Intelligence & Advanced Metabolic Scaling (v3.3)
- -- [ ] Implement **Metabolic Manager**: Advanced 5-key pool logic with 429-aware "Seamless Synaptic Handoff"
- -- [ ] Implement **Sensory Cortex** (Firecrawl): Live research module to fetch post-training documentation (e.g., React 19, SiliconFlow)
- -- [ ] Integrate **Langfuse Trace**: Multi-agent interaction observability, latency heatmaps, and confidence-score auditing
+ [DONE] Phase 22: Documentation Hardening & Synchronization (v3.3)
+ -- [x] Convert all documents to **Plain Simple English** narrative (Human-like).
+ -- [x] Eliminate "Cortex/Synapse" metaphors and AI buzzwords throughout the codebase.
+ -- [x] Refactor all CLI, system logs, and generated artifacts to match the simple English goal.
+ -- [x] Implement **IntelligenceRouter** to centralize all model selection and health checks.
+ -- [x] Restore and standardize version identifiers (v3.3.0) across all manuals.
+ -- [x] Update **Writer Agent** to ensure generated projects follow the same human-first tone.
+ -- [x] Sync and simplify the **Roadmap (tasks.txt)** future development plan.
  
- ## Phase 23: High-Performance Engine (Agno & Motor Cortex)
- -- [ ] Refactor **Agent Initialization** (Agno): Transition to Agno (Phidata) execution engine for 2μs micro-agent boot-up
- -- [ ] Optimize **Motor Cortex** for local high-density reasoning (Gemma-4-31B/Qwen3-30B)
+ ## Phase 23: Faster Code Execution
+ -- [ ] Refactor **Agent Startup**: Move to a faster execution engine for sub-second agent boot-up.
+ -- [ ] Optimize for **Local Hardware**: Tune for high-density local reasoning using 30B+ models.
  
- ## Phase 24: Deep Memory Persistence (The Hippocampus)
- -- [ ] Implement **Hippocampus Controller** (Logseq/Obsidian): Graph-based Long-Term Potentiation (#Synapticity_LTP)
- -- [ ] Architect **Synaptic Buffer**: Formalized 256K-token "Working Set" for high-speed task context retrieval
+ ## Phase 24: Long-Term Memory
+ -- [ ] Implement **External Sync (Logseq/Obsidian)**: Sync system knowledge with your personal notes and graph.
+ -- [ ] Architect **Context Buffer**: Formalized 256K-token "Working Set" for high-speed retrieval of project data.
  
- ## Phase 25: Offline Consolidation & Self-Learning (Dream State)
- -- [ ] Implement **Local Fine-Tuning Pipeline** (Unsloth): QLoRA-based weight adjustment using failed mission data
- -- [ ] Implement **Dream State Engine**: Idle-time autonomous simulations to re-solve failed missions internally
- -- [ ] Implement **Synaptic Weight System**: Dynamic agent routing based on success-driven weight probability
- -- [ ] Implement **Emotional Feedback Loop** (RLHF): Capture human reward/penalty signals for offline model guidance
- -- [ ] Implement **Pruning Mechanism**: Systematic removal of inefficient neural pathways based on failure analysis
+ ## Phase 25: Self-Learning (Idle Mode)
+ -- [ ] Implement **Local Fine-Tuning**: Allow the system to learn from failed projects using local training data.
+ -- [ ] Implement **Idle Learning Mode**: Set the system to re-try failed tasks automatically when your computer is idle.
+ -- [ ] Implement **Success-Based Routing**: Dynamically pick agents based on their past success rates.
+ -- [ ] Implement **Human Feedback Loop**: Allow the user to "thumb up/down" a project to guide future learning.
+ -- [ ] Implement **System Cleanup**: Automatically remove inefficient logic paths based on performance analysis.
  
  ---
   

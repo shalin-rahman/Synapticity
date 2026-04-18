@@ -36,9 +36,9 @@ class MissionWorkspace:
                 f.write(code)
 
     def commit_docs(self, docs: str) -> None:
-        """Saves technical documentation to output/TECHNICAL_DOCS.md."""
+        """Saves technical documentation to output/PROJECT_GUIDE.md."""
         if docs:
-            with open(os.path.join(self._output, "TECHNICAL_DOCS.md"), "w", encoding="utf-8") as f:
+            with open(os.path.join(self._output, "PROJECT_GUIDE.md"), "w", encoding="utf-8") as f:
                 f.write(docs)
 
     def commit_pipeline(self, raw_yaml: str) -> None:

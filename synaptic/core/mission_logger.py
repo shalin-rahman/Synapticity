@@ -24,11 +24,11 @@ class MissionLogger:
         """Writes the full in-memory history out to MISSION_LOG.md."""
         log_path = os.path.join(mission_path, "MISSION_LOG.md")
         with open(log_path, "w", encoding="utf-8") as f:
-            f.write(f"# Synaptic Mission Log: {state.get('title', 'Unknown')}\n\n")
-            f.write(f"- **Objective:** {state.get('objective')}\n")
-            f.write(f"- **Status:** {state.get('phase')}\n")
-            f.write(f"- **Final Verdict:** {state.get('verdict', 'Pending')}\n\n")
-            f.write("## [LOG] Intellectual Audit Trail\n\n")
+            f.write(f"# Project History: {state.get('title', 'Unknown')}\n\n")
+            f.write(f"- **Goal:** {state.get('objective')}\n")
+            f.write(f"- **Phase:** {state.get('phase')}\n")
+            f.write(f"- **Verdict:** {state.get('verdict', 'Pending')}\n\n")
+            f.write("## Mission History\n\n")
 
             for entry in state.get("history", []):
                 f.write(f"### [TIME] {entry['timestamp']} | Role: {entry['role'].upper()}\n")

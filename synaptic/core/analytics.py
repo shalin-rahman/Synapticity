@@ -104,21 +104,19 @@ class PerformanceAnalytics:
         with open(self.stats_file, "r") as f:
             data = json.load(f)
 
-        report = f"\n[📊] FRAMEWORK PERFORMANCE REPORT\n"
+        report = f"\n[📊] SYSTEM PERFORMANCE REPORT\n"
         report += f"----------------------------------\n"
-        report += f"Total Missions Conducted: {data['total_missions']}\n"
-        report += f"First-Pass Success Rate: {data['first_pass_success_rate']}%\n"
-        report += f"Active Insights:\n"
+        report += f"Total Projects Done: {data['total_missions']}\n"
+        report += f"Success Rate: {data['first_pass_success_rate']}%\n"
+        report += f"Model Performance:\n"
         
         for model, metrics in data["agent_metrics"].items():
-            avg_repair = round(metrics['repairs'] / metrics['total'], 2) if metrics['total'] > 0 else 0
-            
             latency_info = ""
             inf_metrics = data.get("inference_metrics", {}).get(model)
             if inf_metrics:
                 avg_lat = round(inf_metrics["total_duration"] / inf_metrics["calls"], 2)
-                latency_info = f" | Avg Latency: {avg_lat}s"
+                latency_info = f" | Avg Speed: {avg_lat}s"
                 
-            report += f"  - Model: {model} | Reliability: {round((1 - metrics['failures']/metrics['total'])*100, 1)}%{latency_info}\n"
+            report += f"  - {model} | Reliability: {round((1 - metrics['failures']/metrics['total'])*100, 1)}%{latency_info}\n"
             
         return report

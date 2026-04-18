@@ -5,7 +5,8 @@ import shutil
 from rich.panel import Panel
 import synaptic
 from synaptic.config import settings
-from synaptic.cli.utils import console, sanitize_id, require_args, load_state, save_state
+from synaptic.cli.utils import console, sanitize_id, require_args
+from synaptic.core.mission_state import MissionStateManager
 
 
 def handle_launch() -> None:
@@ -31,14 +32,15 @@ def handle_update() -> None:
         console.print(f"[red]Error: Mission {mission_id} not found.[/]")
         return
 
-    state = load_state(mission_id)
-    if not state:
-        console.print(f"[red]Error: Mission {mission_id} state missing.[/]")
+    state_mgr = MissionStateManager(workspace)
+    state = state_mgr.load()
+    if not state or state.get("phase") == "START":
+        console.print(f"[red]Error: Mission {mission_id} state missing or uninitialized.[/]")
         return
 
     old_objective = state.get("objective", "None")
     state.update({"objective": new_goal, "specs": None, "code": None, "phase": "UPDATED"})
-    save_state(mission_id, state)
+    state_mgr.save(state)
 
     console.print(Panel(
         f"[bold yellow]Project Update Summary[/]\n\n"

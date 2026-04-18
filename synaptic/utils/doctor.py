@@ -14,24 +14,24 @@ class SynapticDoctor:
     
     @staticmethod
     def run_full_service():
-        """Checks vitals and attempts to heal any identified issues."""
-        results = SynapticDoctor.check_vitals()
+        """Checks the system health and attempts to fix any found issues."""
+        results = SynapticDoctor.run_checks()
         
-        needs_healing = any(status in ["[red]FAILED[/]", "[yellow]WARN[/]"] for status, _ in results.values())
+        needs_fixing = any(status in ["[red]FAILED[/]", "[yellow]WARN[/]"] for status, _ in results.values())
         
-        if needs_healing:
-            console.print("\n[bold yellow][REPAIR] Synaptic Doctor is initiating Auto-Repair...[/]")
+        if needs_fixing:
+            console.print("\n[bold yellow][REPAIR] The Doctor is fixing the system...[/]")
             SynapticDoctor.heal(results)
-            console.print("\n[bold green][OK] Repair cycle complete. Running final check...[/]")
-            SynapticDoctor.check_vitals()
+            console.print("\n[bold green][OK] Repairs finished. Running a final check...[/]")
+            SynapticDoctor.run_checks()
         else:
-            console.print("\n[bold green][SYS] System is at peak performance. No action needed.[/]")
+            console.print("\n[bold green][SYS] The system is working perfectly. No action needed.[/]")
 
     @staticmethod
-    def check_vitals():
-        console.print("[bold cyan][DIAGNOSTICS] Synaptic System Health...[/]\n")
+    def run_checks():
+        console.print("[bold cyan][CHECK] Running system health checks...[/]\n")
         table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Component", style="dim")
+        table.add_column("Part", style="dim")
         table.add_column("Status")
         table.add_column("Details")
 
@@ -49,28 +49,28 @@ class SynapticDoctor:
             if res.status_code == 200:
                 models = [m['name'] for m in res.json().get('models', [])]
                 if settings.OLLAMA_MODEL in models or f"{settings.OLLAMA_MODEL}:latest" in models:
-                    status, detail = ("[green]OK[/]", "Service reachable & Model pulled")
+                    status, detail = ("[green]OK[/]", "Connected & Model found")
                 else:
-                    status, detail = ("[yellow]WARN[/]", f"Service reachable but model '{settings.OLLAMA_MODEL}' missing")
+                    status, detail = ("[yellow]WARN[/]", f"Connected but model '{settings.OLLAMA_MODEL}' is missing")
             else:
                 status, detail = ("[yellow]WARN[/]", f"Status: {res.status_code}")
         except:
-            status, detail = ("[red]FAILED[/]", "Service unreachable")
+            status, detail = ("[red]FAILED[/]", "Could not connect to service")
         table.add_row("Local (Ollama)", status, detail)
         registry["ollama"] = (status, detail)
 
         # 3. Workspace Health
-        status, detail = ("[green]OK[/]", "Directory writable") if os.path.exists(settings.WORKSPACE_PATH) else ("[yellow]WARN[/]", "Directory missing")
+        status, detail = ("[green]OK[/]", "Folder is writable") if os.path.exists(settings.WORKSPACE_PATH) else ("[yellow]WARN[/]", "Folder is missing")
         table.add_row("Workspace", status, detail)
         registry["workspace"] = (status, detail)
 
         # 4. Agent Personas
         agent_dir = settings.AGENT_PATH
         if os.path.exists(agent_dir) and len(os.listdir(agent_dir)) >= 5:
-            status, detail = ("[green]OK[/]", f"All {len(os.listdir(agent_dir))} personas loaded")
+            status, detail = ("[green]OK[/]", f"All {len(os.listdir(agent_dir))} agents loaded")
         else:
-            status, detail = ("[red]FAILED[/]", "Personas missing")
-        table.add_row("Intelligence", status, detail)
+            status, detail = ("[red]FAILED[/]", "Agent files are missing")
+        table.add_row("AI Agents", status, detail)
         registry["intelligence"] = (status, detail)
 
         console.print(table)

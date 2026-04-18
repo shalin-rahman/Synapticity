@@ -1,23 +1,23 @@
-# Synapticity: Technical Framework Overview (v3.3)
+# Synapticity: Framework White Paper (v3.3)
 
-## Executive Summary
+## Summary
 
-Synapticity is an autonomous software development framework built for production use. Think of it as a bridge between your high-level ideas and a verified, ready-to-use codebase. By orchestrating a specialized team of AI agents, it essentially automates the entire software factory process—from planning the initial architecture all the way to deploying it with cloud-native CI/CD pipelines.
+Synapticity is a tool for building software projects automatically. It works by managing a team of specialized AI agents. You give the system a high-level goal, and it handles everything from planning the architecture to testing and deploying the code.
 
-### The "Smart Factory" Model
-Rather than a chat assistant, Synapticity treats software development like a rigorous manufacturing process:
-- **Core Reasoning**: We use high-density local and cloud-based Large Language Models (LLMs) to power the team.
-- **Service Adapters**: Pluggable interfaces allow us to easily swap between Ollama (local), Gemini, and Claude.
-- **Specialized Personas**: Our agents act like a real team (Product Manager, Software Engineer, QA, Security), each with their own unique expertise and constraints.
-- **Dynamic Playbooks**: We inject domain-specific "Skills" directly into the agents' context right when they need them.
-- **Self-Healing Loop**: If something breaks, the verification agents flag the issue, and the system automatically remediates the code in a secure sandbox.
+### Core Features
+- **Local and Cloud Support**: You can use local AI (Ollama) or cloud AI (Gemini/Claude).
+- **Team-Based Design**: Each agent has a job, like "Software Engineer" or "Security Auditor."
+- **Verification Gates**: The system tests all code in a sandbox to make sure it works before finishing.
+- **Auto-Repair**: If a test fails, the system tries to fix the code automatically.
 
 
 ---
 
 ## Intelligence & Workflow Architecture
 
-The framework operates on a state-machine orchestrator that strictly enforces a "Verification-First" culture. We guarantee that no mission code is finalized until it successfully passes through both functional and security testing gates.
+Synapticity operates as a state-machine orchestrator following a strict **"Verification-First"** culture. Software development is treated as a high-stakes mission where nothing is left to chance. Every line of code is synthesized from a blueprint and must successfully pass functional and security audits before it is permitted to join the repository.
+
+The following diagram illustrates how a mission flows from a user objective to a hardened, production-ready product.
 
 
 ```mermaid
@@ -95,47 +95,32 @@ sequenceDiagram
     deactivate ME
 ```
 
-To understand how high-level goals translate into verifiable code, we must examine the specific methods driving the orchestrator. The `MissionEngine` acts as the traffic controller, routing execution across distinct, asynchronous Python methods.
+To understand how high-level goals translate into verifiable code, the specific methods driving the orchestrator are examined below. The `MissionEngine` acts as the traffic controller, routing execution across distinct, asynchronous Python methods.
 
-#### 1. `MissionEngine.run(mission_id: str, objective: str)`
-> **The Big Boss & State Controller**
+#### 1. `MissionEngine.run()` — The Conductor
+> **Role:** This is the heart of the factory. It sets up the secure workspace, manages the 5-phase lifecycle, and ensures project progress is never lost.
 >
-> - **Role & Responsibility:** This is the front door to the factory. It sets up your secure workspace, orchestrates all 5 phases of development, and makes sure we never lose your progress.
-> - **Dependencies:** It works hand-in-hand with `MissionStateManager` (to save your progress) and the `AgentDispatcher` (to assign tasks to the AI team).
-> - **Execution Context:** It runs the second you press enter on `synaptic launch` or `resume`. Think of it as the top-level conductor of the whole operation.
-> - **Example Story:** You ask the CLI to "Build a FastAPI JWT router." The Engine assigns it `mission_id: "001-auth-api"`, creates a blank folder, and updates our `state.json` tracker to say we are officially in the `"PLANNED"` phase.
+> **Narrative:** When a mission is launched, the Engine assigns it a unique ID, builds a dedicated folder, and starts coordinating the team. It’s the top-level conductor that keeps the project in sync and on schedule.
 
-#### 2. `PlanningPhase.run(path: str, state: dict, mission_id: str) -> str`
-> **The Architectural Synthesizer**
+#### 2. `PlanningPhase.run()` — The Architect
+> **Role:** The Architect takes high-level ideas and translates them into a technical, structural blueprint.
 >
-> - **Role & Responsibility:** It takes your rough, human idea and translates it into a strict, highly technical blueprint mapping out exactly what files and functions need to be written.
-> - **Dependencies:** It commands the `Product Manager` agent and relies heavily on the `SkillRegistry` to know what best practices to apply.
-> - **Execution Context:** Runs immediately in Phase 1 before a single line of actual code is allowed to be synthesized.
-> - **Example Story:** The Planner takes `"Build a FastAPI JWT router"`. It asks the Skill Registry for help, and outputs a strict Markdown blueprint: `"We need an auth.py file with a POST /login endpoint returning a 401 on failure."`
+> **Narrative:** Before code is written, a plan is made. The Architect scans the "Skill Registry" to find the best engineering practices for the specific stack (like FastAPI or React) and writes a master `specs.json` file. This is the blueprint that guides the rest of the factory.
 
-#### 3. `AgentRunner.run(system_prompt: str, context: str, task: str) -> str`
-> **The AI Dispatcher**
+#### 3. `AgentRunner.run()` — The Messenger
+> **Role:** The Messenger handles the actual conversation with the AI. It packages up the right context, sends it off, and returns the answer in a clean, usable format.
 >
-> - **Role & Responsibility:** It takes the massive text prompts, figures out which AI (like Gemini or Ollama) should answer, securely sends the request, and cleans up the AI's response so our system can read it.
-> - **Dependencies:** It uses `AbstractModel` to talk to our cloud or local providers, and loads up specific `.yaml` files depending on whether it needs a QA tester or a Coder.
-> - **Execution Context:** Invoked constantly in the background every single time an agent needs to "think" or write a response.
-> - **Example Story:** The runner grabs the blueprint from Step 2, bundles it with the "Software Engineer" persona, sends it to the AI, and gets back a raw Python script containing the `def login():` logic.
+> **Narrative:** Every time an agent needs to "think," the Messenger is at work. It figures out if it should use a local model like Ollama or a cloud one like Gemini, ensuring the status bar stays updated.
 
-#### 4. `HealingCyclePhase.run(path: str, state: dict, specs: str, code: str) -> str`
-> **The Autonomous QA & Fixer Loop**
+#### 4. `HealingCyclePhase.run()` — The Quality Controller
+> **Role:** This is our relentless loop of testing, failure, and repair. No mission can finish until the code passes every single functional and security gate.
 >
-> - **Role & Responsibility:** A relentless loop that forces the generated code through extreme parallel QA and Security testing. If it breaks, it tells the SWE agent to fix it. It repeats until the code is perfect.
-> - **Dependencies:** Relies on `asyncio.gather` for parallel testing, the `RuntimeRunner` for isolated test sandboxes, and the Tester/Security agents.
-> - **Execution Context:** Runs during Phase 3. It will strictly refuse to let the mission finish until it sees a `[PASS]` from both QA and Security.
-> - **Example Story:** The developer agent wrote the script, but forgot to hash the password. The Security agent yells `[FAIL] (CWE-256)`. The developer patches it. This loop continues until we finally have the perfect, secure JWT auth code.
+> **Narrative:** If the newly developed code has a bug or a security flaw, the Quality Controller catches it. It then assigns a "Software Engineer" to apply a patch and tries again. This loop continues autonomously until the code is rock-solid.
 
-#### 5. `RuntimeRunner.execute(script_content: str) -> dict`
-> **The Isolated Sandbox**
+#### 5. `RuntimeRunner.execute()` — The Sandbox
+> **Role:** A safe, isolated environment where experimental code is run without risking the computer's health.
 >
-> - **Role & Responsibility:** A security-first perimeter that safely runs whatever untrusted code the AI just hallucinated inside an isolated shell, protecting your computer.
-> - **Dependencies:** Direct integration with your OS's Python shell via `subprocess` or a Docker container.
-> - **Execution Context:** Triggered multiple times a second during the Healing Cycle to see if the code physically compiles and runs.
-> - **Example Story:** The code from our JWT router is sent here. The sandbox boots up a temporary FastAPI server, hits the endpoint, and returns a JSON report: `{"success": True, "stdout": "Server started on 8000..."}`.
+> **Narrative:** Before any AI-generated code is trusted, it is tested in the Lab. The Sandbox boots it up, records what it does, and reports back. If it crashes or tries to do something suspicious, the sandbox contains it safely.
 
 #### 6. `ProjectReviewEngine.review(project_path: str, goal: str, mission_id: str) -> str`
 > **The Codebase Auditor**
@@ -187,18 +172,18 @@ To understand how high-level goals translate into verifiable code, we must exami
 
 
 ### Component Innovation
-- **Asynchronous Monitoring**: We use background heartbeats and non-blocking model pre-warming to ensure the CLI status updates instantly without any noticeable lag.
-- **Parallel Dispatch**: The Healing Cycle sends out the Functional QA and Security Audit tasks at exactly the same time, which cuts down the total verification time immensely.
-- **Meta-Cognition Reflection**: After a mission finishes, a Reflection Engine looks back at the interactions to automatically synthesize new "Lessons." This allows the team to literally self-improve from task to task.
+- **Asynchronous Monitoring**: The system uses background heartbeats and non-blocking model pre-warming to ensure the CLI status updates instantly.
+- **Parallel Dispatch**: The Healing Cycle sends out the Functional QA and Security Audit tasks at exactly the same time, which cuts down the total verification time.
+- **Meta-Cognition Reflection**: After a mission finishes, a Reflection Engine looks back at the interactions to automatically synthesize new "Lessons." This allows the team to self-improve from task to task.
 
 ---
 
 ## Design Philosophy: SOLID & Agentic
 
-We wrote this framework closely adhering to **SOLID** and **DRY** development principles:
-- **Single Responsibility**: Every part has its lane. Individual managers handle state, logs, workspace, and model communication independently.
-- **Dependency Inversion**: Our high-level orchestration doesn't care whether you're using Gemini or Ollama; it's completely decoupled.
-- **Open-Closed Pattern**: Want to add a new command, agent, or model adapter? You can register them via a unified dispatch registry without needing to mess with the core logic.
+The framework is built using **SOLID** and **DRY** development principles:
+- **Single Responsibility**: Every part has a primary focus. Individual managers handle state, logs, workspace, and model communication independently.
+- **Dependency Inversion**: High-level orchestration is independent of whether Gemini or Ollama is used.
+- **Open-Closed Pattern**: Commands, agents, or model adapters can be registered via a unified dispatch registry without modifying the core logic.
 
 ---
 

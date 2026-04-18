@@ -39,7 +39,7 @@ def show_help() -> None:
     """Renders the help panel listing all CLI commands."""
     console.print(Panel(
         f"[bold cyan]Synapticity Framework (v{settings.VERSION})[/]\n"
-        "[dim]Professional-grade collaborative software engineering.[/dim]"
+        "[dim]Building and testing software with AI agents.[/dim]"
     ))
     console.print("\n[bold]Usage Commands:[/]")
     commands = [
