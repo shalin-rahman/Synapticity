@@ -1,0 +1,15 @@
+{
+    "phase": "PLANNED",
+    "objective": "Simple Python script that prints the current system time in a pretty format.",
+    "directives": {},
+    "title": "Quick System Time Script",
+    "history": [
+        {
+            "timestamp": "2026-04-23 12:00:00",
+            "role": "product-manager",
+            "thought": "The user wants a very simple utility script. Planning is minimal.",
+            "content": "**Executive Summary:**\nCreate a script `time_util.py` that imports `datetime` and prints the current time.\n\n**Requirements:**\n1. Use standard libraries only.\n2. Output format: YYYY-MM-DD HH:MM:SS"
+        }
+    ],
+    "specs": "**Executive Summary:**\nCreate a script `time_util.py` that imports `datetime` and prints the current time.\n\n**Requirements:**\n1. Use standard libraries only.\n2. Output format: YYYY-MM-DD HH:MM:SS"
+}
