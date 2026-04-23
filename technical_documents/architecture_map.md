@@ -148,11 +148,11 @@ flowchart TD
     VerifiedNode --> DeployNode
     VerifiedNode --> ReflectionNode
 
-    style StateNode fill:#1E1E1E,stroke:#3498db,stroke-width:2px,color:#fff
-    style PlaybookNode fill:#1E1E1E,stroke:#3498db,stroke-width:2px,color:#fff
-    style SpecsNode fill:#1E1E1E,stroke:#3498db,stroke-width:2px,color:#fff
-    style ReflectionNode fill:#1E1E1E,stroke:#3498db,stroke-width:2px,color:#fff
-    style DeployNode fill:#2E86C1,stroke:#ECF0F1,stroke-width:2px,color:#fff
+    style StateNode fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
+    style PlaybookNode fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
+    style SpecsNode fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
+    style ReflectionNode fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
+    style DeployNode fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#f8fafc
 ```
 
 

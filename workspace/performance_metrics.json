@@ -1,65 +1,15 @@
 {
-    "total_missions": 6,
-    "first_pass_success_rate": 33.33,
-    "average_repairs_per_mission": 0.0,
+    "total_missions": 1,
+    "first_pass_success_rate": 100.0,
+    "average_repairs_per_mission": 3.0,
     "agent_metrics": {
-        "gemma4:latest": {
-            "total": 3,
-            "repairs": 1,
-            "failures": 2
-        },
-        "gemma3:4b": {
-            "total": 1,
-            "repairs": 0,
-            "failures": 1
-        },
         "qwen2.5-coder:7b": {
-            "total": 2,
+            "total": 1,
             "repairs": 3,
-            "failures": 1
+            "failures": 0
         }
     },
     "mission_history": [
-        {
-            "timestamp": "2026-04-14T11:50:55.394277",
-            "mission_id": "claude-parity-test",
-            "success": true,
-            "repairs": 1,
-            "duration_seconds": 3290.03,
-            "model_used": "gemma4:latest"
-        },
-        {
-            "timestamp": "2026-04-18T17:23:18.217310",
-            "mission_id": "test-mission",
-            "success": false,
-            "repairs": 0,
-            "duration_seconds": 1099.51,
-            "model_used": "gemma4:latest"
-        },
-        {
-            "timestamp": "2026-04-18T18:03:11.695974",
-            "mission_id": "test-mission",
-            "success": false,
-            "repairs": 0,
-            "duration_seconds": 600.78,
-            "model_used": "gemma4:latest"
-        },
-        {
-            "timestamp": "2026-04-18T19:10:53.117016",
-            "mission_id": "test-mission",
-            "success": false,
-            "repairs": 0,
-            "duration_seconds": 603.15,
-            "model_used": "gemma3:4b"
-        },
-        {
-            "timestamp": "2026-04-18T19:22:51.173890",
-            "mission_id": "test-mission",
-            "success": false,
-            "repairs": 0,
-            "duration_seconds": 600.78,
-            "model_used": "qwen2.5-coder:7b"
-        },
         {
             "timestamp": "2026-04-18T20:28:06.506816",
             "mission_id": "test-mission",
@@ -71,8 +21,8 @@
     ],
     "inference_metrics": {
         "Ollama": {
-            "calls": 22,
-            "total_duration": 7459.504297733307
+            "calls": 1,
+            "total_duration": 2089.32
         }
     }
 }
