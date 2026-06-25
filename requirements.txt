@@ -10,3 +10,11 @@ pydantic
 ruff
 bandit
 pylint
+# --- Phase 26: Production Synapse Layer ---
+upstash-redis          # Metabolism: GlobalMetabolicLock (distributed Gemini key pool)
+supabase               # Hippocampus: SupabaseMemoryProvider (pgvector long-term memory)
+posthog                # Sensory: PostHogSensoryFeedback (vision data / synaptic weights)
+# --- Phase 31: Gemini Agentic Intelligence ---
+mcp                    # SynapticMCPServer + Gemini ClientSession MCP integration
+# --- Phase 25: Idle Learning Mode ---
+psutil                 # CPU load polling for idle detection

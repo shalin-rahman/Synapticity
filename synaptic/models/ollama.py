@@ -26,6 +26,7 @@ class OllamaAdapter(AbstractModel):
         self.tags_url = self.url.replace("/generate", "/tags")
         self.model = model_name or settings.OLLAMA_MODEL
         self._servicing = False
+        self._client = httpx.AsyncClient(timeout=1800.0)
         
         # Non-blocking warm-up remains in background thread to avoid event loop contention on start
         import threading
@@ -118,23 +119,22 @@ class OllamaAdapter(AbstractModel):
             raise ModelProviderError(f"Ollama Generation Failed: {e}")
 
     async def _make_request_async(self, payload: dict, is_retry: bool = False) -> str:
-        async with httpx.AsyncClient(timeout=1800.0) as client:
-            try:
-                response = await client.post(self.url, json=payload)
-                response.raise_for_status()
-                
-                data = response.json()
-                result = data.get('response', '')
-                
-                if not result and not is_retry:
-                    await asyncio.sleep(3)
-                    return await self._make_request_async(payload, is_retry=True)
-                
-                return result
-            except (httpx.ConnectError, httpx.HTTPStatusError) as e:
-                if not is_retry:
-                    # In a real async system, we'd want a non-blocking service restarter
-                    # but for now we fallback to the sync service check
-                    self._ensure_service_sync()
-                    return await self._make_request_async(payload, is_retry=True)
-                raise
+        try:
+            response = await self._client.post(self.url, json=payload)
+            response.raise_for_status()
+
+            data = response.json()
+            result = data.get('response', '')
+
+            if not result and not is_retry:
+                await asyncio.sleep(3)
+                return await self._make_request_async(payload, is_retry=True)
+
+            return result
+        except (httpx.ConnectError, httpx.HTTPStatusError) as e:
+            if not is_retry:
+                # In a real async system, we'd want a non-blocking service restarter
+                # but for now we fallback to the sync service check
+                self._ensure_service_sync()
+                return await self._make_request_async(payload, is_retry=True)
+            raise

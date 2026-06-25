@@ -19,6 +19,7 @@ class ClaudeAdapter(AbstractModel):
         self.api_key = settings.ANTHROPIC_API_KEY
         self.model = settings.CLAUDE_MODEL
         self.url = "https://api.anthropic.com/v1/messages"
+        self._client = httpx.AsyncClient(timeout=600.0)
 
     async def generate(self, system_instruction: str, prompt: str) -> str:
         """Asynchronously sends a request to Claude and returns the text response."""
@@ -39,15 +40,14 @@ class ClaudeAdapter(AbstractModel):
             "temperature": 0.5
         }
 
-        async with httpx.AsyncClient(timeout=600.0) as client:
-            try:
-                response = await client.post(self.url, headers=headers, json=data)
-                response.raise_for_status()
-                
-                payload = response.json()
-                if "content" in payload and len(payload["content"]) > 0:
-                    return payload["content"][0]["text"]
-                
-                raise ModelProviderError(f"Unexpected Claude format: {payload}")
-            except Exception as e:
-                raise ModelProviderError(f"Claude Connection Failed: {e}")
+        try:
+            response = await self._client.post(self.url, headers=headers, json=data)
+            response.raise_for_status()
+
+            payload = response.json()
+            if "content" in payload and len(payload["content"]) > 0:
+                return payload["content"][0]["text"]
+
+            raise ModelProviderError(f"Unexpected Claude format: {payload}")
+        except Exception as e:
+            raise ModelProviderError(f"Claude Connection Failed: {e}")

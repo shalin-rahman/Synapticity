@@ -1,11 +1,11 @@
 {
-    "total_missions": 1,
+    "total_missions": 4,
     "first_pass_success_rate": 100.0,
     "average_repairs_per_mission": 3.0,
     "agent_metrics": {
         "qwen2.5-coder:7b": {
-            "total": 1,
-            "repairs": 3,
+            "total": 4,
+            "repairs": 7,
             "failures": 0
         }
     },
@@ -17,12 +17,36 @@
             "repairs": 3,
             "duration_seconds": 2089.32,
             "model_used": "qwen2.5-coder:7b"
+        },
+        {
+            "timestamp": "2026-04-23T12:53:46.001272",
+            "mission_id": "quick-task",
+            "success": true,
+            "repairs": 2,
+            "duration_seconds": 1030.99,
+            "model_used": "qwen2.5-coder:7b"
+        },
+        {
+            "timestamp": "2026-04-23T13:45:38.879711",
+            "mission_id": "hello-time",
+            "success": true,
+            "repairs": 0,
+            "duration_seconds": 1099.23,
+            "model_used": "qwen2.5-coder:7b"
+        },
+        {
+            "timestamp": "2026-04-23T13:53:03.290929",
+            "mission_id": "quick-task",
+            "success": true,
+            "repairs": 2,
+            "duration_seconds": 0.0,
+            "model_used": "qwen2.5-coder:7b"
         }
     ],
     "inference_metrics": {
         "Ollama": {
-            "calls": 1,
-            "total_duration": 2089.32
+            "calls": 18,
+            "total_duration": 4179.817632026672
         }
     }
 }

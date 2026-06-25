@@ -1,0 +1,685 @@
+{
+  "project_name": "Online Food Ordering Platform v2.0",
+  "source_document": "sample_srs.txt",
+  "generated_at": "2026-04-26T07:53:43.784463",
+  "summary": "Project 'SOFTWARE REQUIREMENTS SPECIFICATION' consists of 8 major components with 32 identified tasks. Document analysis identified 8 sections and 0 data tables.",
+  "components": [
+    {
+      "name": "SOFTWARE REQUIREMENTS SPECIFICATION",
+      "description": "Online Food Ordering Platform v2.0",
+      "type": "ui",
+      "tasks": [
+        {
+          "id": "UI-001",
+          "title": "Component Architecture",
+          "description": "Design component hierarchy, state management, routing",
+          "category": "ui",
+          "optimistic_hours": 5.6,
+          "likely_hours": 8.0,
+          "pessimistic_hours": 12.0,
+          "expected_hours": 8.27,
+          "dependencies": [],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-002",
+          "title": "Core UI Implementation",
+          "description": "Implement screens, forms, data display components",
+          "category": "ui",
+          "optimistic_hours": 14.0,
+          "likely_hours": 20.0,
+          "pessimistic_hours": 30.0,
+          "expected_hours": 20.67,
+          "dependencies": [
+            "UI-001"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-003",
+          "title": "Styling & Responsiveness",
+          "description": "CSS/Tailwind implementation, mobile responsiveness",
+          "category": "ui",
+          "optimistic_hours": 8.399999999999999,
+          "likely_hours": 12.0,
+          "pessimistic_hours": 18.0,
+          "expected_hours": 12.4,
+          "dependencies": [
+            "UI-002"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-004",
+          "title": "Frontend Testing",
+          "description": "Component tests, E2E tests, accessibility checks",
+          "category": "ui",
+          "optimistic_hours": 7.0,
+          "likely_hours": 10.0,
+          "pessimistic_hours": 15.0,
+          "expected_hours": 10.33,
+          "dependencies": [
+            "UI-003"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        }
+      ],
+      "interfaces": [],
+      "tech_stack": []
+    },
+    {
+      "name": "1. INTRODUCTION",
+      "description": "This document specifies requirements for a modern online food ordering platform connecting customers with local restaurants. The platform includes a customer-facing web application, restaurant managem...",
+      "type": "api",
+      "tasks": [
+        {
+          "id": "API-001",
+          "title": "API Design & Specification",
+          "description": "Design REST/GraphQL endpoints, request/response schemas, OpenAPI spec",
+          "category": "api",
+          "optimistic_hours": 5.6,
+          "likely_hours": 8.0,
+          "pessimistic_hours": 12.0,
+          "expected_hours": 8.27,
+          "dependencies": [],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "API-002",
+          "title": "Core Endpoint Implementation",
+          "description": "Implement business logic endpoints with validation and error handling",
+          "category": "api",
+          "optimistic_hours": 11.2,
+          "likely_hours": 16.0,
+          "pessimistic_hours": 24.0,
+          "expected_hours": 16.53,
+          "dependencies": [
+            "API-001"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "API-003",
+          "title": "Authentication & Authorization",
+          "description": "Implement JWT/OAuth2 security, role-based access control",
+          "category": "api",
+          "optimistic_hours": 8.399999999999999,
+          "likely_hours": 12.0,
+          "pessimistic_hours": 18.0,
+          "expected_hours": 12.4,
+          "dependencies": [
+            "API-002"
+          ],
+          "required_skills": [],
+          "risk_factors": [
+            "security concerns"
+          ],
+          "mitigation": "Conduct security review and penetration testing"
+        },
+        {
+          "id": "API-004",
+          "title": "API Testing & Documentation",
+          "description": "Unit tests, integration tests, API documentation generation",
+          "category": "api",
+          "optimistic_hours": 10.5,
+          "likely_hours": 15.0,
+          "pessimistic_hours": 22.5,
+          "expected_hours": 15.5,
+          "dependencies": [
+            "API-003"
+          ],
+          "required_skills": [],
+          "risk_factors": [
+            "integration complexity"
+          ],
+          "mitigation": "Build adapter pattern with circuit breaker"
+        }
+      ],
+      "interfaces": [],
+      "tech_stack": []
+    },
+    {
+      "name": "2. SYSTEM OVERVIEW",
+      "description": "",
+      "type": "service",
+      "tasks": [
+        {
+          "id": "SER-001",
+          "title": "Service Architecture",
+          "description": "Design service boundaries, interfaces, data flow",
+          "category": "service",
+          "optimistic_hours": 5.6,
+          "likely_hours": 8.0,
+          "pessimistic_hours": 12.0,
+          "expected_hours": 8.27,
+          "dependencies": [],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "SER-002",
+          "title": "Core Business Logic",
+          "description": "Implement domain logic, workflows, state machines",
+          "category": "service",
+          "optimistic_hours": 14.0,
+          "likely_hours": 20.0,
+          "pessimistic_hours": 30.0,
+          "expected_hours": 20.67,
+          "dependencies": [
+            "SER-001"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "SER-003",
+          "title": "Integration Layer",
+          "description": "Connect to external services, APIs, message queues",
+          "category": "service",
+          "optimistic_hours": 9.799999999999999,
+          "likely_hours": 14.0,
+          "pessimistic_hours": 21.0,
+          "expected_hours": 14.47,
+          "dependencies": [
+            "SER-002"
+          ],
+          "required_skills": [],
+          "risk_factors": [
+            "integration complexity"
+          ],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "SER-004",
+          "title": "Service Testing",
+          "description": "Unit tests, mock external dependencies, contract tests",
+          "category": "service",
+          "optimistic_hours": 8.399999999999999,
+          "likely_hours": 12.0,
+          "pessimistic_hours": 18.0,
+          "expected_hours": 12.4,
+          "dependencies": [
+            "SER-003"
+          ],
+          "required_skills": [],
+          "risk_factors": [
+            "integration complexity"
+          ],
+          "mitigation": "Standard development practices"
+        }
+      ],
+      "interfaces": [],
+      "tech_stack": []
+    },
+    {
+      "name": "3. FUNCTIONAL REQUIREMENTS",
+      "description": "",
+      "type": "ui",
+      "tasks": [
+        {
+          "id": "UI-001",
+          "title": "Component Architecture",
+          "description": "Design component hierarchy, state management, routing",
+          "category": "ui",
+          "optimistic_hours": 5.6,
+          "likely_hours": 8.0,
+          "pessimistic_hours": 12.0,
+          "expected_hours": 8.27,
+          "dependencies": [],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-002",
+          "title": "Core UI Implementation",
+          "description": "Implement screens, forms, data display components",
+          "category": "ui",
+          "optimistic_hours": 14.0,
+          "likely_hours": 20.0,
+          "pessimistic_hours": 30.0,
+          "expected_hours": 20.67,
+          "dependencies": [
+            "UI-001"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-003",
+          "title": "Styling & Responsiveness",
+          "description": "CSS/Tailwind implementation, mobile responsiveness",
+          "category": "ui",
+          "optimistic_hours": 8.399999999999999,
+          "likely_hours": 12.0,
+          "pessimistic_hours": 18.0,
+          "expected_hours": 12.4,
+          "dependencies": [
+            "UI-002"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-004",
+          "title": "Frontend Testing",
+          "description": "Component tests, E2E tests, accessibility checks",
+          "category": "ui",
+          "optimistic_hours": 7.0,
+          "likely_hours": 10.0,
+          "pessimistic_hours": 15.0,
+          "expected_hours": 10.33,
+          "dependencies": [
+            "UI-003"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        }
+      ],
+      "interfaces": [],
+      "tech_stack": []
+    },
+    {
+      "name": "4. NON-FUNCTIONAL REQUIREMENTS",
+      "description": "",
+      "type": "ui",
+      "tasks": [
+        {
+          "id": "UI-001",
+          "title": "Component Architecture",
+          "description": "Design component hierarchy, state management, routing",
+          "category": "ui",
+          "optimistic_hours": 5.6,
+          "likely_hours": 8.0,
+          "pessimistic_hours": 12.0,
+          "expected_hours": 8.27,
+          "dependencies": [],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-002",
+          "title": "Core UI Implementation",
+          "description": "Implement screens, forms, data display components",
+          "category": "ui",
+          "optimistic_hours": 14.0,
+          "likely_hours": 20.0,
+          "pessimistic_hours": 30.0,
+          "expected_hours": 20.67,
+          "dependencies": [
+            "UI-001"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-003",
+          "title": "Styling & Responsiveness",
+          "description": "CSS/Tailwind implementation, mobile responsiveness",
+          "category": "ui",
+          "optimistic_hours": 8.399999999999999,
+          "likely_hours": 12.0,
+          "pessimistic_hours": 18.0,
+          "expected_hours": 12.4,
+          "dependencies": [
+            "UI-002"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "UI-004",
+          "title": "Frontend Testing",
+          "description": "Component tests, E2E tests, accessibility checks",
+          "category": "ui",
+          "optimistic_hours": 7.0,
+          "likely_hours": 10.0,
+          "pessimistic_hours": 15.0,
+          "expected_hours": 10.33,
+          "dependencies": [
+            "UI-003"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        }
+      ],
+      "interfaces": [],
+      "tech_stack": []
+    },
+    {
+      "name": "5. TECHNICAL REQUIREMENTS",
+      "description": "Frontend: React 18, Vue 3, TypeScript, Tailwind CSS\nBackend: Python 3.11, FastAPI, SQLAlchemy, Celery\nDatabase: PostgreSQL 15, Redis 7, Elasticsearch 8\nInfrastructure: Docker, Kubernetes, AWS, Terrafo...",
+      "type": "api",
+      "tasks": [
+        {
+          "id": "API-001",
+          "title": "API Design & Specification",
+          "description": "Design REST/GraphQL endpoints, request/response schemas, OpenAPI spec",
+          "category": "api",
+          "optimistic_hours": 5.6,
+          "likely_hours": 8.0,
+          "pessimistic_hours": 12.0,
+          "expected_hours": 8.27,
+          "dependencies": [],
+          "required_skills": [
+            "react",
+            "docker",
+            "aws",
+            "github-actions",
+            "postgresql",
+            "kubernetes",
+            "fastapi",
+            "redis",
+            "terraform",
+            "python",
+            "typescript"
+          ],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "API-002",
+          "title": "Core Endpoint Implementation",
+          "description": "Implement business logic endpoints with validation and error handling",
+          "category": "api",
+          "optimistic_hours": 11.2,
+          "likely_hours": 16.0,
+          "pessimistic_hours": 24.0,
+          "expected_hours": 16.53,
+          "dependencies": [
+            "API-001"
+          ],
+          "required_skills": [
+            "react",
+            "docker",
+            "aws",
+            "github-actions",
+            "postgresql",
+            "kubernetes",
+            "fastapi",
+            "redis",
+            "terraform",
+            "python",
+            "typescript"
+          ],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "API-003",
+          "title": "Authentication & Authorization",
+          "description": "Implement JWT/OAuth2 security, role-based access control",
+          "category": "api",
+          "optimistic_hours": 8.399999999999999,
+          "likely_hours": 12.0,
+          "pessimistic_hours": 18.0,
+          "expected_hours": 12.4,
+          "dependencies": [
+            "API-002"
+          ],
+          "required_skills": [
+            "react",
+            "docker",
+            "aws",
+            "github-actions",
+            "postgresql",
+            "kubernetes",
+            "fastapi",
+            "redis",
+            "terraform",
+            "python",
+            "typescript"
+          ],
+          "risk_factors": [
+            "security concerns"
+          ],
+          "mitigation": "Conduct security review and penetration testing"
+        },
+        {
+          "id": "API-004",
+          "title": "API Testing & Documentation",
+          "description": "Unit tests, integration tests, API documentation generation",
+          "category": "api",
+          "optimistic_hours": 10.5,
+          "likely_hours": 15.0,
+          "pessimistic_hours": 22.5,
+          "expected_hours": 15.5,
+          "dependencies": [
+            "API-003"
+          ],
+          "required_skills": [
+            "react",
+            "docker",
+            "aws",
+            "github-actions",
+            "postgresql",
+            "kubernetes",
+            "fastapi",
+            "redis",
+            "terraform",
+            "python",
+            "typescript"
+          ],
+          "risk_factors": [
+            "integration complexity"
+          ],
+          "mitigation": "Build adapter pattern with circuit breaker"
+        }
+      ],
+      "interfaces": [],
+      "tech_stack": [
+        "python",
+        "fastapi",
+        "react",
+        "typescript",
+        "postgresql",
+        "redis",
+        "docker",
+        "kubernetes",
+        "aws",
+        "terraform",
+        "github-actions"
+      ]
+    },
+    {
+      "name": "6. ASSUMPTIONS",
+      "description": "- Restaurant partners will have reliable internet connectivity\n- Delivery partners use mobile devices with GPS capability\n- Payment providers maintain their sandbox environments for testing",
+      "type": "api",
+      "tasks": [
+        {
+          "id": "API-001",
+          "title": "API Design & Specification",
+          "description": "Design REST/GraphQL endpoints, request/response schemas, OpenAPI spec",
+          "category": "api",
+          "optimistic_hours": 5.6,
+          "likely_hours": 8.0,
+          "pessimistic_hours": 12.0,
+          "expected_hours": 8.27,
+          "dependencies": [],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "API-002",
+          "title": "Core Endpoint Implementation",
+          "description": "Implement business logic endpoints with validation and error handling",
+          "category": "api",
+          "optimistic_hours": 11.2,
+          "likely_hours": 16.0,
+          "pessimistic_hours": 24.0,
+          "expected_hours": 16.53,
+          "dependencies": [
+            "API-001"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "API-003",
+          "title": "Authentication & Authorization",
+          "description": "Implement JWT/OAuth2 security, role-based access control",
+          "category": "api",
+          "optimistic_hours": 8.399999999999999,
+          "likely_hours": 12.0,
+          "pessimistic_hours": 18.0,
+          "expected_hours": 12.4,
+          "dependencies": [
+            "API-002"
+          ],
+          "required_skills": [],
+          "risk_factors": [
+            "security concerns"
+          ],
+          "mitigation": "Conduct security review and penetration testing"
+        },
+        {
+          "id": "API-004",
+          "title": "API Testing & Documentation",
+          "description": "Unit tests, integration tests, API documentation generation",
+          "category": "api",
+          "optimistic_hours": 10.5,
+          "likely_hours": 15.0,
+          "pessimistic_hours": 22.5,
+          "expected_hours": 15.5,
+          "dependencies": [
+            "API-003"
+          ],
+          "required_skills": [],
+          "risk_factors": [
+            "integration complexity"
+          ],
+          "mitigation": "Build adapter pattern with circuit breaker"
+        }
+      ],
+      "interfaces": [],
+      "tech_stack": []
+    },
+    {
+      "name": "7. EXCLUSIONS",
+      "description": "- Native mobile applications (iOS/Android) - Phase 2\n- Multi-language support beyond English - Phase 2\n- AI-powered recommendation engine - Future enhancement\n- In-house delivery fleet management - Th...",
+      "type": "integration",
+      "tasks": [
+        {
+          "id": "INT-001",
+          "title": "Integration Analysis",
+          "description": "Analyze external APIs, data formats, rate limits",
+          "category": "integration",
+          "optimistic_hours": 5.6,
+          "likely_hours": 8.0,
+          "pessimistic_hours": 12.0,
+          "expected_hours": 8.27,
+          "dependencies": [],
+          "required_skills": [],
+          "risk_factors": [
+            "integration complexity"
+          ],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "INT-002",
+          "title": "Adapter Implementation",
+          "description": "Build adapters, transformers, error handling",
+          "category": "integration",
+          "optimistic_hours": 11.2,
+          "likely_hours": 16.0,
+          "pessimistic_hours": 24.0,
+          "expected_hours": 16.53,
+          "dependencies": [
+            "INT-001"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "INT-003",
+          "title": "Sync & Reliability",
+          "description": "Handle failures, retries, idempotency, data consistency",
+          "category": "integration",
+          "optimistic_hours": 9.799999999999999,
+          "likely_hours": 14.0,
+          "pessimistic_hours": 21.0,
+          "expected_hours": 14.47,
+          "dependencies": [
+            "INT-002"
+          ],
+          "required_skills": [],
+          "risk_factors": [],
+          "mitigation": "Standard development practices"
+        },
+        {
+          "id": "INT-004",
+          "title": "Integration Testing",
+          "description": "Mock external services, contract validation",
+          "category": "integration",
+          "optimistic_hours": 7.0,
+          "likely_hours": 10.0,
+          "pessimistic_hours": 15.0,
+          "expected_hours": 10.33,
+          "dependencies": [
+            "INT-003"
+          ],
+          "required_skills": [],
+          "risk_factors": [
+            "integration complexity"
+          ],
+          "mitigation": "Standard development practices"
+        }
+      ],
+      "interfaces": [],
+      "tech_stack": []
+    }
+  ],
+  "totals": {
+    "optimistic_hours": 283.5,
+    "likely_hours": 405.0,
+    "pessimistic_hours": 607.5,
+    "expected_hours": 418.5,
+    "confidence_95_low": 398.52,
+    "confidence_95_high": 438.48
+  },
+  "risk_assessment": "Key Risks:\n- integration complexity: 7 tasks affected\n- security concerns: 3 tasks affected",
+  "recommended_team": [
+    "Product Manager",
+    "Tech Lead"
+  ],
+  "critical_path": [
+    "UI-002: Core UI Implementation (SOFTWARE REQUIREMENTS SPECIFICATION)",
+    "SER-002: Core Business Logic (2. SYSTEM OVERVIEW)",
+    "UI-002: Core UI Implementation (3. FUNCTIONAL REQUIREMENTS)",
+    "UI-002: Core UI Implementation (4. NON-FUNCTIONAL REQUIREMENTS)",
+    "API-002: Core Endpoint Implementation (1. INTRODUCTION)"
+  ],
+  "assumptions": [
+    "Requirements are complete and stable",
+    "Third-party services will be available",
+    "Team has required technical skills",
+    "No major architectural changes during development"
+  ],
+  "exclusions": [
+    "EXCLUSIONS\n- Native mobile applications (iOS/Android) - Phase 2\n- Multi-language support beyond English - Phase 2\n- AI-powered recommendation engine - Future enhancement\n- In-house delivery fleet management - Third-party integration"
+  ]
+}

@@ -13,10 +13,11 @@ def handle_learn() -> None:
 
     mission_id = sanitize_id(sys.argv[2])
     
+    import asyncio
     from synaptic.core.self_learning import ReflectionEngine
     engine = ReflectionEngine()
-    
-    lessons = engine.analyze(mission_id)
+
+    lessons = asyncio.run(engine.analyze(mission_id))
     
     from rich.panel import Panel
     console.print(Panel(

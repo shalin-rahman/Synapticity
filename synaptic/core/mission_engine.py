@@ -110,13 +110,13 @@ class MissionEngine:
             if state.get("phase") != "COMPLETED":
                 await self._finalize(path, state, mission_id, workspace, state_mgr)
 
-            self._log_mission_performance(mission_id, state, time.time() - start_time, success=True)
+            await self._log_mission_performance(mission_id, state, time.time() - start_time, success=True)
 
         except WorkflowError:
-            self._log_mission_performance(mission_id, state, time.time() - start_time, success=False)
+            await self._log_mission_performance(mission_id, state, time.time() - start_time, success=False)
             raise
         except Exception as e:
-            self._log_mission_performance(mission_id, state, time.time() - start_time, success=False)
+            await self._log_mission_performance(mission_id, state, time.time() - start_time, success=False)
             state["last_error"] = str(e)
             state_mgr.save(state)
             raise WorkflowError(
@@ -179,12 +179,12 @@ class MissionEngine:
             
         return clean_objective.strip(), directives
 
-    def _log_mission_performance(self, mission_id: str, state: dict, duration: float, success: bool):
+    async def _log_mission_performance(self, mission_id: str, state: dict, duration: float, success: bool):
         """Standardized performance logging for mission analytics."""
         model_name = settings.OLLAMA_MODEL if settings.OLLAMA_ACTIVE else (
             settings.CLAUDE_MODEL if settings.CLAUDE_ACTIVE else settings.GEMINI_MODEL
         )
-        self._analytics.log_mission_result(
+        await self._analytics.log_mission_result(
             mission_id=mission_id,
             success=success,
             repairs=state.get("repair_count", 0),

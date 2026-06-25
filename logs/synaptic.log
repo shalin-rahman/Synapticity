@@ -1,6 +1,14 @@
-2026-04-23 12:19:08,920 - synaptic - WARNING - Rotating Gemini API Key index: 0
-2026-04-23 12:21:24,240 - synaptic - WARNING - Rotating Gemini API Key index: 0
-2026-04-23 12:27:42,526 - synaptic - WARNING - Rotating Gemini API Key index: 0
-2026-04-23 12:36:34,998 - synaptic - INFO - Starting work: quick-task
-2026-04-23 12:36:40,452 - synaptic - INFO - Ollama Warm-up initiated: qwen2.5-coder:7b
-2026-04-23 12:36:40,453 - synaptic - INFO - Ollama Warm-up initiated: qwen2.5-coder:7b
+2026-04-27 15:51:43,802 - synaptic - INFO - [ANALYTICS] Performance logged for mission-001: Success=True, Repairs=0
+2026-04-27 15:51:43,846 - synaptic - INFO - [ANALYTICS] Performance logged for m1: Success=True, Repairs=0
+2026-04-27 15:51:43,856 - synaptic - INFO - [ANALYTICS] Performance logged for m2: Success=False, Repairs=2
+2026-04-27 15:51:43,956 - synaptic - ERROR - State file corrupted: C:\Users\HABIBU~1\AppData\Local\Temp\tmpgnh12649\mission_state.json: Expecting property name enclosed in double quotes: line 1 column 3 (char 2). Re-initializing.
+2026-04-27 15:51:52,653 - synaptic - INFO - [ANALYTICS] Performance logged for mission-001: Success=True, Repairs=0
+2026-04-27 15:51:52,681 - synaptic - INFO - [ANALYTICS] Performance logged for m1: Success=True, Repairs=0
+2026-04-27 15:51:52,695 - synaptic - INFO - [ANALYTICS] Performance logged for m2: Success=False, Repairs=2
+2026-04-27 15:51:52,768 - synaptic - ERROR - State file corrupted: C:\Users\HABIBU~1\AppData\Local\Temp\tmp6ho9d72g\mission_state.json: Expecting property name enclosed in double quotes: line 1 column 3 (char 2). Re-initializing.
+2026-04-27 15:51:52,786 - synaptic - WARNING - Failover triggered for TEST-AGENT: forced failure
+2026-04-27 16:03:42,880 - synaptic - INFO - [ANALYTICS] Performance logged for mission-001: Success=True, Repairs=0
+2026-04-27 16:03:42,906 - synaptic - INFO - [ANALYTICS] Performance logged for m1: Success=True, Repairs=0
+2026-04-27 16:03:42,917 - synaptic - INFO - [ANALYTICS] Performance logged for m2: Success=False, Repairs=2
+2026-04-27 16:03:42,981 - synaptic - ERROR - State file corrupted: C:\Users\HABIBU~1\AppData\Local\Temp\tmpxfxe4lab\mission_state.json: Expecting property name enclosed in double quotes: line 1 column 3 (char 2). Re-initializing.
+2026-04-27 16:03:42,999 - synaptic - WARNING - Failover triggered for TEST-AGENT: forced failure

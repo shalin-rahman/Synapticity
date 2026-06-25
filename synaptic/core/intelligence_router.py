@@ -19,11 +19,31 @@ class IntelligenceRouter:
 
     def resolve(self) -> tuple:
         """Determines the best primary and fallback model adapters based on config and history."""
-        gemini = GeminiAdapter() if settings.GEMINI_ACTIVE else None
-        claude = ClaudeAdapter() if settings.CLAUDE_ACTIVE else None
-        ollama = OllamaAdapter() if settings.OLLAMA_ACTIVE else None
+        # Lazy-load adapters only when needed to avoid unnecessary resource usage
+        _gemini = None
+        _claude = None
 
-        cloud = claude if settings.CLAUDE_ACTIVE else (gemini if settings.GEMINI_ACTIVE else None)
+        def get_gemini():
+            nonlocal _gemini
+            if _gemini is None and settings.GEMINI_ACTIVE:
+                # Upgrade to GeminiToolAdapter when function calling is enabled
+                if settings.GEMINI_USE_FUNCTION_CALLING or settings.GEMINI_USE_CODE_EXECUTION:
+                    from synaptic.models.gemini_tool import GeminiToolAdapter
+                    from synaptic.core.tool_dispatcher import SynapticToolDispatcher
+                    from synaptic.core.skill_registry import SkillRegistry
+                    dispatcher = SynapticToolDispatcher(skill_registry=SkillRegistry())
+                    _gemini = GeminiToolAdapter(dispatcher=dispatcher)
+                else:
+                    _gemini = GeminiAdapter()
+            return _gemini
+
+        def get_claude():
+            nonlocal _claude
+            if _claude is None and settings.CLAUDE_ACTIVE:
+                _claude = ClaudeAdapter()
+            return _claude
+
+        cloud = get_claude() if settings.CLAUDE_ACTIVE else (get_gemini() if settings.GEMINI_ACTIVE else None)
 
         primary, fallback = None, None
         if settings.OLLAMA_ACTIVE:
@@ -35,7 +55,7 @@ class IntelligenceRouter:
             else:
                 fallback = cloud
         elif cloud:
-            primary, fallback = cloud, (gemini if claude and settings.GEMINI_ACTIVE else None)
+            primary, fallback = cloud, (get_gemini() if settings.CLAUDE_ACTIVE and settings.GEMINI_ACTIVE else None)
         else:
             raise ConfigurationError("No intelligence engines available. Update .env.")
 
@@ -47,7 +67,7 @@ class IntelligenceRouter:
             return primary, fallback
 
         try:
-            with open(self._analytics.stats_file, "r") as r:
+            with open(self._analytics.stats_file, "r", encoding="utf-8") as r:
                 stats = json.load(r)
             
             model_key = type(primary).__name__.replace("Adapter", "")
@@ -64,3 +84,4 @@ class IntelligenceRouter:
             pass
 
         return primary, fallback
+

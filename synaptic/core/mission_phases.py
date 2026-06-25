@@ -73,9 +73,9 @@ class HealingCyclePhase:
         for i in range(1, settings.MAX_RETRY_ATTEMPTS + 1):
             print(f"[VERIFY] Verification Pass {i}...")
 
-            execution    = self._run_sandbox(code)
+            execution    = await self._run_sandbox(code)
             runtime_log  = f"SUCCESS: {execution['success']}\nSTDOUT: {execution['stdout']}\nSTDERR: {execution['stderr']}"
-            quality      = self._runtime.scan_quality(code)
+            quality      = await self._run_quality_scan(code)
 
             # Dispatch QA and Security in parallel via true asyncio parallelism
             results = await asyncio.gather(
@@ -113,9 +113,9 @@ class HealingCyclePhase:
     # Private helpers
     # ------------------------------------------------------------------
 
-    def _run_sandbox(self, code: str) -> dict:
+    async def _run_sandbox(self, code: str) -> dict:
         print("[TEST] Running code in the sandbox...")
-        result    = self._runtime.run_python_code(code)
+        result = await self._sandbox(code)
         res_color = "green" if result["success"] else "red"
         _console.print(Panel(
             f"[bold]Status:[/] [{res_color}]{'SUCCESS' if result['success'] else 'FAILED'}[/]\n"
@@ -127,6 +127,29 @@ class HealingCyclePhase:
             expand=False
         ))
         return result
+
+    async def _sandbox(self, code: str) -> dict:
+        """Routes code execution to GeminiCodeRunner or local RuntimeRunner."""
+        from synaptic.config import settings
+        if settings.GEMINI_ACTIVE and settings.GEMINI_USE_CODE_EXECUTION:
+            try:
+                from synaptic.core.gemini_code_runner import GeminiCodeRunner
+                print("[TEST] Using Gemini native sandbox (server-side execution)...")
+                return await GeminiCodeRunner().run_python_code(code)
+            except Exception as exc:
+                print(f"[WARN] GeminiCodeRunner failed ({exc}), falling back to local runner...")
+        return await self._runtime.run_python_code(code)
+
+    async def _run_quality_scan(self, code: str) -> dict:
+        """Routes quality scan to GeminiCodeRunner (AI) or local RuntimeRunner."""
+        if settings.GEMINI_ACTIVE and settings.GEMINI_USE_CODE_EXECUTION:
+            try:
+                from synaptic.core.gemini_code_runner import GeminiCodeRunner
+                print("[QUALITY] AI quality scan (Gemini)...")
+                return await GeminiCodeRunner().scan_quality(code)
+            except Exception as exc:
+                print(f"[WARN] GeminiCodeRunner.scan_quality failed ({exc}), falling back...")
+        return self._runtime.scan_quality(code)
 
     async def _run_qa(self, specs, runtime_log, quality, code, mission_id, loop_i, state, directive=None) -> str:
         print("[QA] Checking logic and structure...")

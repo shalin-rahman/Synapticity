@@ -13,22 +13,29 @@ from synaptic.utils.doctor import SynapticDoctor
 
 from synaptic.cli.handlers.stats import handle_stats
 
+from synaptic.cli.handlers.estimate import handle_estimate
+from synaptic.cli.handlers.tool import handle_tool
+from synaptic.cli.handlers.idle_learn import handle_idle_learn
+
 COMMAND_REGISTRY: dict[str, callable] = {
-    "dash":    show_dashboard,
-    "help":    show_help,
-    "stats":   handle_stats,
-    "doctor":  SynapticDoctor.run_full_service,
-    "launch":  handle_launch,
-    "resume":  handle_resume,
-    "update":  handle_update,
-    "remove":  handle_remove,
-    "agent":   handle_agent,
-    "audit":   handle_audit,
-    "log":     handle_log,
-    "deploy":  handle_deploy,
-    "ingest":  handle_ingest,
-    "stress":  handle_stress,
-    "admin":   handle_admin,
-    "review":  handle_review,
-    "learn":   handle_learn,
+    "dash":         show_dashboard,
+    "help":         show_help,
+    "stats":        handle_stats,
+    "doctor":       SynapticDoctor.run_full_service,
+    "launch":       handle_launch,
+    "resume":       handle_resume,
+    "update":       handle_update,
+    "remove":       handle_remove,
+    "agent":        handle_agent,
+    "audit":        handle_audit,
+    "log":          handle_log,
+    "deploy":       handle_deploy,
+    "ingest":       handle_ingest,
+    "stress":       handle_stress,
+    "admin":        handle_admin,
+    "review":       handle_review,
+    "learn":        handle_learn,
+    "estimate":     handle_estimate,
+    "tool":         handle_tool,
+    "idle-learn":   handle_idle_learn,
 }

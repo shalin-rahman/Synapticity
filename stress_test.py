@@ -1,4 +1,5 @@
 import time
+import asyncio
 from rich.console import Console
 from rich.table import Table
 from synaptic.config import settings
@@ -6,8 +7,12 @@ from synaptic.models.gemini import GeminiAdapter
 
 console = Console()
 
-def run_stress_test():
-    """Validates multi-account rotation and burst capacity for synaptic."""
+async def run_stress_test():
+    """Validates multi-account rotation and burst capacity for synaptic.
+    
+    Uses the official GeminiAdapter.generate() path to respect SLEEP_BUFFER
+    and rate-limit rotation logic, producing a realistic throughput benchmark.
+    """
     adapter = GeminiAdapter()
     keys = settings.GEMINI_KEYS
     
@@ -16,6 +21,7 @@ def run_stress_test():
         return
 
     console.print(f"[bold cyan]Benchmarking synaptic Pool ({len(keys)} Accounts)...[/]")
+    console.print(f"[INFO] SLEEP_BUFFER={settings.SLEEP_BUFFER}s | Model={settings.GEMINI_MODEL}")
     results = []
 
     for i, _ in enumerate(keys):
@@ -23,12 +29,12 @@ def run_stress_test():
         count = 0
         start_time = time.time()
         
-        # Burst test: fire rapid low-token requests
+        # Burst test: fire requests via the official adapter path
         for _ in range(5):
             try:
-                adapter.client.models.generate_content(
-                    model=settings.GEMINI_MODEL, 
-                    contents="ping"
+                await adapter.generate(
+                    system_instruction="You are a ping responder.",
+                    prompt="ping"
                 )
                 count += 1
                 console.print(f"  [green][OK][/] Burst {count} success", end="\r")
@@ -44,7 +50,7 @@ def run_stress_test():
         })
         
         console.print(f"\n  Account {i+1} benchmarked in {round(elapsed, 2)}s.")
-        adapter.rotate()
+        await adapter.rotate()
 
     # Summary
     table = Table(title="[STATS] synaptic Pool Performance Summary")
@@ -57,5 +63,9 @@ def run_stress_test():
 
     console.print(table)
 
+def main():
+    asyncio.run(run_stress_test())
+
 if __name__ == "__main__":
-    run_stress_test()
+    main()
+

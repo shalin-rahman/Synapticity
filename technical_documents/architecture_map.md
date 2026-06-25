@@ -1,4 +1,4 @@
-# Synapticity 3.3: Master Architecture Map
+# Synapticity 3.3: Master Architecture Map (updated 2026-04-28)
 
 This map shows how the different parts of Synapticity work together. You can use it to understand how the system moves from your initial goal to a finished software project.
 
@@ -318,18 +318,21 @@ These are the main engines that run the system.
 
 | Part | What it does |
 | :--- | :--- |
-| `MissionEngine` | Manages the project from start to finish. It uses the `IntelligenceRouter` to pick models and handles the final output. |
-| `IntelligenceRouter`| **(NEW)** Selects the best AI model for the job based on your config and project history. |
-| `AgentRunner` | Handles the actual calls to the AI and updates the status bar so you can see what's happening. |
-| `PlanningPhase` | Plans the project architecture before any code is written. |
-| `HealingCyclePhase`| Runs a loop of testing and fixing until the code works perfectly. |
-| `ProjectReviewEngine` | Analyzes an existing project folder and suggests ways to improve it. |
-| `SkillRegistry` | Matches your goal with technical rules (Skills) and sends them to the AI agents. |
-| `RuntimeRunner` | Runs the AI-generated code in a safe sandbox to see if it works. |
-| `ReflectionEngine` | Looks at the mission log after it's finished to learn from any mistakes. |
+| `MissionEngine` | Manages the project from start to finish. Uses `IntelligenceRouter` to pick models and handles the final output. |
+| `IntelligenceRouter` | Selects the best AI model based on config and performance history. Auto-promotes fallback when primary reliability < 40%. |
+| `AgentRunner` | Handles AI calls with async heartbeat monitoring and automatic failover to the fallback model. |
+| `PlanningPhase` | Plans project architecture before any code is written. Caches specs by content hash. |
+| `HealingCyclePhase` | Runs QA and Security in parallel (`asyncio.gather`) in a repair loop until code passes all gates. |
+| `ProjectReviewEngine` | Analyzes an existing project folder and patches it via a 3-agent review loop. |
+| `SkillRegistry` | Keyword-triggered skill injection from RAM cache with hot-reload support. Accepts local and external skills. |
+| `RuntimeRunner` | Async sandboxed code execution (`asyncio.create_subprocess_exec`). Sync Bandit + Ruff quality scans. |
+| `EstimationEngine` | PERT estimation from PDF/DOCX/TXT documents. AI refinement pass via `refine_with_ai()`. |
+| `IdleLearningScheduler` | Monitors machine idleness; auto-replays failed missions and extracts lessons when idle. |
+| `ReflectionEngine` | Reads mission logs after completion to extract engineering lessons into the shared skill base. |
+| `MissionStateManager` | Saves and loads `mission_state.json` for resumable missions. |
+| `GeminiToolAdapter` | Agentic loop with function calling and parallel tool dispatch. Inherits `GeminiAdapter`. |
+| `SynapticOrganInterface` | Fault-tolerant gateway to all SaaS organs (Supabase, Sentry, PostHog, Resend, Twilio). |
 | `OfflineConsolidator` | **(Roadmap)** Fine-tunes local models using data from past missions. |
-| `MissionStateManager` | Saves the project progress to `state.json` so you can resume it later. |
-| `HippocampusController`| Stores the long-term history of your projects in a graph. |
 
 ---
 

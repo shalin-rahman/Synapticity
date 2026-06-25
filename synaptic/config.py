@@ -18,8 +18,9 @@ class Settings(BaseSettings):
     
     # --- Gemini API Configuration ---
     GEMINI_ACTIVE: bool = False
-    GEMINI_MODEL: str = "gemini-2.0-flash"
-    SLEEP_BUFFER: float = 4.0 # Seconds between calls
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_TIER: str = "free"          # "free" auto-doubles SLEEP_BUFFER; "paid" uses it as-is
+    SLEEP_BUFFER: float = 4.0          # Paid-tier base delay (seconds). Free tier = 2x this value.
     
     # --- Local LLM (Ollama) Configuration ---
     OLLAMA_ACTIVE: bool = True
@@ -35,6 +36,11 @@ class Settings(BaseSettings):
     AGENT_PATH: str = "agents"
     SKILL_PATH: str = "skills"
     WORKSPACE_PATH: str = "workspace"
+    EXTERNAL_SKILL_PATHS: list = Field(
+        default_factory=lambda: [
+            "skills-external/addyosmani-agent-skills",
+        ]
+    )  # External skill directories (loaded after local, override on conflict)
     
     # --- Workflow Guardrails ---
     MAX_RETRY_ATTEMPTS: int = 3
@@ -78,6 +84,44 @@ class Settings(BaseSettings):
     ENABLE_DREAM_STATE: bool = False
     OFFLINE_LEARNING_THRESHOLD: float = 0.20 # 20% failure rate triggers local fine-tune
     UNSLOTH_VRAM_TARGET: int = 24 # Targeted at 24GB GPUs
+
+    # --- Phase 26: Production Synapse Layer (SaaS Organs) ---
+    # Metabolism — Upstash Redis (GlobalMetabolicLock)
+    UPSTASH_REDIS_URL: str = os.getenv("UPSTASH_REDIS_URL", "")
+    UPSTASH_REDIS_TOKEN: str = os.getenv("UPSTASH_REDIS_TOKEN", "")
+    # Hippocampus — Supabase + pgvector
+    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
+    SUPABASE_ANON_KEY: str = os.getenv("SUPABASE_ANON_KEY", "")
+    # Nociceptors — Sentry
+    SENTRY_DSN: str = os.getenv("SENTRY_DSN", "")
+    SENTRY_AUTH_TOKEN: str = os.getenv("SENTRY_AUTH_TOKEN", "")
+    SENTRY_WEBHOOK_SECRET: str = os.getenv("SENTRY_WEBHOOK_SECRET", "")
+    SENTRY_ORG_SLUG: str = os.getenv("SENTRY_ORG_SLUG", "")
+    # Sensory — PostHog
+    POSTHOG_PERSONAL_API_KEY: str = os.getenv("POSTHOG_PERSONAL_API_KEY", "")
+    POSTHOG_PROJECT_ID: str = os.getenv("POSTHOG_PROJECT_ID", "")
+    POSTHOG_HOST: str = os.getenv("POSTHOG_HOST", "https://us.posthog.com")
+    # Efferent Synapse — Resend
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
+    RESEND_FROM_EMAIL: str = os.getenv("RESEND_FROM_EMAIL", "synapticity@noreply.ai")
+    # Efferent Reflex — Twilio
+    TWILIO_ACCOUNT_SID: str = os.getenv("TWILIO_ACCOUNT_SID", "")
+    TWILIO_AUTH_TOKEN: str = os.getenv("TWILIO_AUTH_TOKEN", "")
+    TWILIO_FROM_NUMBER: str = os.getenv("TWILIO_FROM_NUMBER", "")
+    TWILIO_ADMIN_NUMBER: str = os.getenv("TWILIO_ADMIN_NUMBER", "")
+
+    # --- Phase 31: Gemini Agentic Intelligence ---
+    GEMINI_USE_FUNCTION_CALLING: bool = False  # Enable GeminiToolAdapter with skill/organ tools
+    GEMINI_USE_CODE_EXECUTION: bool = False    # Enable Gemini native sandbox (replaces local RuntimeRunner)
+    MAX_TOOL_ROUNDS: int = 10                  # Max agentic loop iterations before hard stop
+    MCP_ENABLED: bool = False                  # Wire MCP ClientSession into GeminiToolAdapter
+    MCP_SERVER_COMMAND: str = "python -m synaptic.organs.mcp_server"  # Command to launch the MCP server
+
+    # --- Phase 25: Idle Learning Mode ---
+    IDLE_CPU_THRESHOLD: float = 15.0      # % CPU below which machine is considered idle
+    IDLE_INPUT_TIMEOUT: int = 600         # Seconds of no keyboard/mouse input to qualify as idle
+    IDLE_CHECK_INTERVAL: int = 300        # Seconds between idle checks in the monitoring loop
+    IDLE_MAX_RETRIES: int = 3             # Max replay attempts per failed mission
 
     @property
     def ANTHROPIC_API_KEY(self) -> str:
